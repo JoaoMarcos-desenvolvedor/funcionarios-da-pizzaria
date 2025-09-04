@@ -10,7 +10,7 @@ function clicar() {
         paragrafo.innerHTML = '';
     } else {
         if (funcionario2 == usuario) {
-            paragrafo.innerHTML = "Pior que está tendo!";
+            paragrafo.innerHTML = "Pior que está tendo!🤮";
             titulo.innerHTML = "CARACTERÍSTICAS";
             l1.innerHTML = "AZEDO";
             l2.innerHTML = "CHATO";
