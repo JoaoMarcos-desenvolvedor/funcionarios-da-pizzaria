@@ -3,7 +3,7 @@ paragrafo.innerHTML = "Insira um nome e sobrenome com iniciais maiúsculas";
 function clicar() {
     let funcionario1 = "João Marcos";
     let funcionario2 = "Bruno Rafael";
-    let funcionario3 = "Leonara";
+    let funcionario3 = "Leonara Silva";
     let usuario = document.querySelector('input').value;
     if (funcionario1 == usuario) {
         titulo.innerHTML = "ESSE CARA É COMPETENTE😎";
