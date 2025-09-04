@@ -1,67 +1,61 @@
 body {
-  margin: 0;
-  padding: 0;
-  background-color: black;
-  color: black;
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
 }
 
-.container {
-  margin: 100px 600px;
-  max-width: 0 auto; 
-  height: 300px;
-  background-color: #EBEBE4;
-  text-align: center;
-  border-radius: 20px;
+form {
+    background-color: white;
+    margin: 100px auto;
+    max-width: 720px;;
+    color: black;
+    height: 300px;;
+    text-align: center;
+    border-radius: 10px;
 }
 
-.container h1 {
-  background-color: #F54536;
-  color: white;
-  padding: 8px;
-  border-radius: 20px 20px 0 0;
+h1 {
+    background-color: #e42020;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+    color: white;
 }
 
-.container-group {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 50px;
-  font-size: 20px;
+label {
+    font-size: 20px;
 }
 
-.container-group label {
-  margin-right: 5px;
+input {
+    padding: 3px;
 }
 
-.container-group input {
-  padding: 4px;
-  border-radius: 4px;
-  border: 1px solid black;
+input:focus {
+    background-color: rgba(160, 160, 184, 0.342);
 }
 
-.container-group button {
-  margin-left: 5px;
-  border-radius: 4px;
-  border: none;
-  background-color: #F54536;
-  padding: 5px;
-  color: white;
-  cursor: pointer;
+button {
+    background-color: #e42020;
+    color: white;
+    border: solid 0.5px black;
+    padding: 3px;
+    cursor: pointer;
 }
 
-.container-group button:hover {
-  background-color: #AE4536;
+button:hover {
+    background-color:  #bd1b1b;
 }
 
-p {
-  color: red;
+h3 {
+    color: red;
 }
 
 ul {
-  list-style-type: none;
-  text-align: center;
+    list-style-type: none;
+    text-align: center;
 }
 
-h2 {
-  color: red;
+ul li {
+    color: red;
 }
