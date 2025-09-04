@@ -8,6 +8,9 @@ function clicar() {
     if (funcionario1 == usuario) {
         titulo.innerHTML = "ESSE CARA É COMPETENTE😎";
         paragrafo.innerHTML = '';
+        l1.innerHTML = "";
+        l2.innerHTML = "";
+        l3.innerHTML = "";
     } else {
         if (funcionario2 == usuario) {
             paragrafo.innerHTML = "Pior que está tendo!🤮";
