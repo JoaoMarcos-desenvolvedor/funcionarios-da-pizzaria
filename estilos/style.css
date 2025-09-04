@@ -1,1 +1,64 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: black;
+    color: white;
+}
+
+.container {
+    background-color: white;
+    margin: 100px auto;
+    max-width: 720px;;
+    color: black;
+    height: 300px;;
+    text-align: center;
+    border-radius: 10px;
+    height: 300px;
+}
+
+h1 {
+    background-color: #e42020;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px 10px 0 0;
+    color: white;
+}
+
+label {
+    font-size: 20px;
+}
+
+input {
+    padding: 3px;
+}
+
+input:focus {
+    background-color: rgba(160, 160, 184, 0.342);
+}
+
+button {
+    background-color: #e42020;
+    color: white;
+    border: solid 0.5px black;
+    padding: 3px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color:  #bd1b1b;
+}
+
+h3 {
+    color: red;
+}
+
+ul {
+    list-style-type: none;
+    text-align: center;
+}
+
+ul li {
+    color: red;
+    text-align: center;
+}
 
