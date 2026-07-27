@@ -1,91 +1,264 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta charset="UTF-8">
-        <title>Formulário</title>
-        <link rel="stylesheet" href="./estilos/style.css">
-        <link rel="shortcut icon" href="./icones/favicon.ico">
-        <style>
-            body {
-                margin: 0;
-                padding: 0;
-                background-color: black;
-                color: white;
-            }
-            
-            .container {
-                background-color: white;
-                margin: 100px auto;
-                max-width: 720px;;
-                color: black;
-                height: 300px;;
-                text-align: center;
-                border-radius: 10px;
-                height: 300px;
-            }
-            
-            h1 {
-                background-color: #e42020;
-                padding: 20px;
-                text-align: center;
-                border-radius: 10px 10px 0 0;
-                color: white;
-            }
-            
-            label {
-                font-size: 20px;
-            }
-            
-            input {
-                padding: 3px;
-            }
-            
-            input:focus {
-                background-color: rgba(160, 160, 184, 0.342);
-            }
-            
-            button {
-                background-color: #e42020;
-                color: white;
-                border: solid 0.5px black;
-                padding: 3px;
-                cursor: pointer;
-            }
-            
-            button:hover {
-                background-color:  #bd1b1b;
-            }
-            
-            h3 {
-                color: red;
-            }
-            
-            ul {
-                list-style-type: none;
-                text-align: center;
-            }
-            
-            ul li {
-                color: red;
-                text-align: center;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Atendentes da Leblon prime</h1>
-                <label for="usuario">Nome:</label>
-                <input type="text" id="usuario" name="usuario">
-                <button onclick="clicar()" id="verificar">Verificar</button>
-                <p id="paragrafo"></p>
-                <h3 id="titulo"></h3>
-                <ul>
-                    <li id="l1"></li>
-                    <li id="l2"></li>
-                    <li id="l3"></li>
-            </ul>
-            <script src="app.js"></script>
-        </div>
-    </body>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Comanda Leblon Prime</title>
+  <style>
+    :root { 
+      --bg: #000000; --surface: #151515; --gold: #fcc010; 
+      --oxblood: #e31821; --cream: #ffffff; --line: #2a2a2a; --green: #28a745;
+    }
+    * { box-sizing: border-box; }
+    body { background: var(--bg); color: var(--cream); font-family: system-ui, sans-serif; margin: 0; padding: 28px 16px 60px; display: flex; flex-direction: column; align-items: center; }
+    
+    .escondido { display: none !important; }
+    .header { text-align: center; margin-bottom: 28px; width: 100%; }
+    .header h1 { font-size: 1.8rem; margin: 0; color: var(--cream); text-transform: uppercase; font-weight: 900; }
+    .header .sub { font-size: 0.75rem; color: var(--gold); margin-top: 6px; letter-spacing: 1px; text-transform: uppercase; }
+    
+    .ticket-app { width: 100%; max-width: 480px; margin: 0 auto; overflow: hidden; }
+    .login-container { width: 100%; max-width: 400px; margin: 60px auto; background: var(--surface); padding: 35px 25px; border-radius: 12px; border: 1px solid var(--line); text-align: center; }
+    
+    .form-input { width: 100%; padding: 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--cream); font-size: 1rem; margin-bottom: 15px; }
+    .btn { background: var(--gold); color: var(--bg); border: none; padding: 14px; border-radius: 6px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; }
+    .btn-rm { background: transparent; color: var(--oxblood); border: 1px solid var(--oxblood); padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .btn-ok { background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    
+    .row { background: var(--surface); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); }
+    .contagem { font-weight: 900; font-size: 1.3rem; color: var(--bg); background: var(--gold); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+    
+    /* Perfil Modal */
+    .perfil-box { background: #1a1a1a; border: 1px solid var(--gold); border-radius: 8px; padding: 20px; margin-top: 20px; text-align: left; }
+    .perfil-stat { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 1.1rem; border-bottom: 1px dashed var(--line); padding-bottom: 5px; }
+  </style>
+</head>
+<body>
+
+  <!-- TELA DE LOGIN (Roteador Inicial) -->
+  <div id="tela-login" class="login-container">
+    <h2 style="color: var(--cream); margin-top: 0;">LEBLON <span style="color: var(--gold);">PRIME</span></h2>
+    <p style="opacity: 0.8; font-size: 0.9rem;">Identifique-se para entrar</p>
+    
+    <input type="text" id="login-nome" placeholder="Seu Nome (Entregador)" class="form-input">
+    <button class="btn" onclick="entrarComoEntregador()" style="margin-bottom: 20px;">ENTRAR COMO MOTOBOY</button>
+    
+    <hr style="border-color: var(--line); margin: 20px 0;">
+    
+    <input type="password" id="login-senha" placeholder="Senha do Admin" class="form-input">
+    <button class="btn" onclick="entrarComoAdmin()" style="background: var(--oxblood); color: white;">ENTRAR NO PAINEL</button>
+  </div>
+
+  <!-- TELA DO MOTOBOY -->
+  <div id="tela-motoboy" class="escondido ticket-app">
+    <div class="header">
+      <h1>OLÁ, <span id="motoboy-nome-display" style="color: var(--oxblood);"></span>!</h1>
+      <div class="sub">PAINEL DE DESPACHO</div>
+    </div>
+    
+    <div class="row" style="flex-direction: column; text-align: center; padding: 30px 20px;">
+      <div style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px;">ENTREGAS APROVADAS HOJE</div>
+      <div class="contagem" id="motoboy-qtd" style="width: 85px; height: 85px; font-size: 2.5rem; margin: 0 auto 20px;">0</div>
+      
+      <div id="area-saida">
+        <p style="font-weight: bold; margin-bottom: 10px;">Quantos pedidos está levando agora?</p>
+        <input type="number" id="qtd-levar" value="1" min="1" max="15" class="form-input" style="text-align: center; font-size: 2rem; height: 60px; width: 100px; margin: 0 auto 15px;">
+        <button class="btn" onclick="avisarSaida()">AVISAR SAÍDA</button>
+      </div>
+
+      <div id="area-rota" class="escondido" style="background: var(--bg); padding: 15px; border: 1px solid var(--oxblood); border-radius: 8px; width: 100%; margin-top: 15px;">
+        <p style="color: var(--oxblood); font-weight: bold; margin: 0 0 10px;">🏍️ EM ROTA</p>
+        <p style="margin:0;">Aguardando o restaurante confirmar seu retorno.</p>
+      </div>
+      
+      <!-- BOTÃO DO PERFIL -->
+      <button onclick="togglePerfil()" style="background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 10px; border-radius: 6px; margin-top: 30px; width: 100%; cursor: pointer; font-weight: bold;">MEU PERFIL (ESTATÍSTICAS)</button>
+      
+      <div id="perfil-dados" class="perfil-box escondido">
+        <div class="perfil-stat"><span>Hoje:</span> <b id="stat-hoje" style="color: var(--gold);">0</b></div>
+        <div class="perfil-stat"><span>Este Mês:</span> <b id="stat-mes" style="color: var(--gold);">0</b></div>
+        <div class="perfil-stat" style="border: none;"><span>Total Histórico:</span> <b id="stat-total" style="color: var(--gold);">0</b></div>
+      </div>
+
+      <button onclick="sair()" style="margin-top: 20px; background: transparent; color: white; border: none; text-decoration: underline; cursor: pointer;">Sair da conta</button>
+    </div>
+  </div>
+
+  <!-- TELA DO ADMIN -->
+  <div id="tela-admin" class="escondido ticket-app" style="max-width: 800px;">
+    <div class="header">
+      <h1>LEBLON <span style="color: var(--oxblood);">PRIME</span></h1>
+      <div class="sub">PAINEL ADMINISTRATIVO (TEMPO REAL)</div>
+      <button onclick="sair()" style="margin-top: 10px; background: transparent; color: var(--oxblood); border: none; cursor: pointer;">[ Fechar Painel ]</button>
+    </div>
+
+    <h3 style="color: var(--oxblood); border-bottom: 1px solid var(--oxblood); padding-bottom: 5px;">⚠️ Aguardando Retorno (Na Rua)</h3>
+    <div id="admin-pendentes">Nenhum motoboy na rua agora.</div>
+
+    <h3 style="color: var(--gold); border-bottom: 1px solid var(--line); padding-bottom: 5px; margin-top: 30px;">✅ Concluídas Hoje</h3>
+    <div id="admin-concluidas">Carregando...</div>
+  </div>
+
+  <!-- FIREBASE CONFIGURAÇÃO (SDK Modular V9) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+
+    // A sua chave exata da captura de tela
+    const firebaseConfig = {
+      apiKey: "AIzaSyBsKT8yM2UJ6dSonbab2ETSidi1KLF6GbM",
+      authDomain: "leblon-prime-entregas.firebaseapp.com",
+      projectId: "leblon-prime-entregas",
+      storageBucket: "leblon-prime-entregas.firebasestorage.app",
+      messagingSenderId: "872333644229",
+      appId: "1:872333644229:web:8231a0806055c1dab9bbac"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Variáveis Globais
+    let usuarioAtual = "";
+    let papelAtual = ""; // 'admin' ou 'motoboy'
+    let dataHoje = new Date().toISOString().split('T')[0];
+    let mesAtual = dataHoje.substring(0, 7); // YYYY-MM
+
+    // Funções Expostas para o HTML (window)
+    window.entrarComoAdmin = function() {
+      if(document.getElementById("login-senha").value === "1234") {
+        papelAtual = "admin";
+        document.getElementById("tela-login").classList.add("escondido");
+        document.getElementById("tela-admin").classList.remove("escondido");
+        iniciarEscutaAdmin();
+      } else {
+        alert("Senha Incorreta!");
+      }
+    };
+
+    window.entrarComoEntregador = function() {
+      const nome = document.getElementById("login-nome").value.trim().toUpperCase();
+      if(nome) {
+        usuarioAtual = nome;
+        papelAtual = "motoboy";
+        document.getElementById("tela-login").classList.add("escondido");
+        document.getElementById("tela-motoboy").classList.remove("escondido");
+        document.getElementById("motoboy-nome-display").innerText = nome;
+        iniciarEscutaMotoboy();
+      }
+    };
+
+    window.sair = function() {
+      location.reload(); // Recarrega a página para voltar ao zero
+    };
+
+    window.togglePerfil = function() {
+      const box = document.getElementById("perfil-dados");
+      box.classList.toggle("escondido");
+      if(!box.classList.contains("escondido")) {
+        calcularEstatisticas();
+      }
+    };
+
+    // --- LÓGICA DO MOTOBOY ---
+    function iniciarEscutaMotoboy() {
+      // Escuta entregas de hoje
+      const qEntregas = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje));
+      onSnapshot(qEntregas, (snapshot) => {
+        document.getElementById("motoboy-qtd").innerText = snapshot.size;
+      });
+
+      // Escuta se ele está em rota
+      const qPendentes = query(collection(db, "pendentes"), where("motoboy", "==", usuarioAtual));
+      onSnapshot(qPendentes, (snapshot) => {
+        if(snapshot.empty) {
+          document.getElementById("area-saida").classList.remove("escondido");
+          document.getElementById("area-rota").classList.add("escondido");
+        } else {
+          document.getElementById("area-saida").classList.add("escondido");
+          document.getElementById("area-rota").classList.remove("escondido");
+        }
+      });
+    }
+
+    window.avisarSaida = async function() {
+      const qtd = parseInt(document.getElementById("qtd-levar").value);
+      await addDoc(collection(db, "pendentes"), {
+        motoboy: usuarioAtual,
+        qtd: qtd,
+        hora: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
+      });
+    };
+
+    async function calcularEstatisticas() {
+      const qTotal = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual));
+      const snapshot = await getDocs(qTotal);
+      let contMes = 0;
+      let contHoje = 0;
+      
+      snapshot.forEach((doc) => {
+        const dados = doc.data();
+        if(dados.data === dataHoje) contHoje++;
+        if(dados.data.startsWith(mesAtual)) contMes++;
+      });
+
+      document.getElementById("stat-hoje").innerText = contHoje;
+      document.getElementById("stat-mes").innerText = contMes;
+      document.getElementById("stat-total").innerText = snapshot.size;
+    }
+
+    // --- LÓGICA DO ADMIN ---
+    function iniciarEscutaAdmin() {
+      // Escuta Motoboys na Rua (Pendentes)
+      onSnapshot(collection(db, "pendentes"), (snapshot) => {
+        const div = document.getElementById("admin-pendentes");
+        div.innerHTML = "";
+        if(snapshot.empty) div.innerHTML = "<p>Nenhum motoboy na rua.</p>";
+        snapshot.forEach((d) => {
+          const p = d.data();
+          div.innerHTML += `
+            <div class="row" style="border-color: var(--oxblood);">
+              <div><b>${p.motoboy}</b> levou ${p.qtd} pedido(s) às ${p.hora}</div>
+              <button class="btn-ok" onclick="confirmarChegada('${d.id}', '${p.motoboy}', ${p.qtd})">CONFIRMAR RETORNO</button>
+            </div>`;
+        });
+      });
+
+      // Escuta Entregas Concluídas Hoje
+      const qHoje = query(collection(db, "entregas"), where("data", "==", dataHoje));
+      onSnapshot(qHoje, (snapshot) => {
+        const contagem = {};
+        snapshot.forEach(d => {
+          const nome = d.data().motoboy;
+          contagem[nome] = (contagem[nome] || 0) + 1;
+        });
+        
+        const div = document.getElementById("admin-concluidas");
+        div.innerHTML = "";
+        if(Object.keys(contagem).length === 0) div.innerHTML = "<p>Nenhuma entrega concluída hoje ainda.</p>";
+        
+        for (const [nome, qtd] of Object.entries(contagem)) {
+          div.innerHTML += `
+            <div class="row">
+              <div style="font-size: 1.2rem; font-weight: bold;">${nome}</div>
+              <div class="contagem">${qtd}</div>
+            </div>`;
+        }
+      });
+    }
+
+    window.confirmarChegada = async function(docId, motoboy, qtd) {
+      // Apaga o registro de "pendente"
+      await deleteDoc(doc(db, "pendentes", docId));
+      
+      // Adiciona as entregas no histórico
+      for(let i=0; i<qtd; i++){
+        await addDoc(collection(db, "entregas"), {
+          motoboy: motoboy,
+          data: dataHoje,
+          timestamp: serverTimestamp()
+        });
+      }
+    };
+  </script>
+</body>
 </html>
