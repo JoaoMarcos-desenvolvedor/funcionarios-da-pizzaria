@@ -18,10 +18,12 @@
     .header .sub { font-size: 0.75rem; color: var(--gold); margin-top: 6px; letter-spacing: 1px; text-transform: uppercase; }
     
     .ticket-app { width: 100%; max-width: 800px; margin: 0 auto; overflow: hidden; }
+    .ticket { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 20px; width: 100%; margin-bottom: 25px; }
+    
     .login-container { width: 100%; max-width: 400px; margin: 60px auto; background: var(--surface); padding: 35px 25px; border-radius: 12px; border: 1px solid var(--line); text-align: center; }
     
     .form-input { width: 100%; padding: 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--cream); font-size: 1rem; margin-bottom: 15px; }
-    .btn { background: var(--gold); color: var(--bg); border: none; padding: 14px; border-radius: 6px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; }
+    .btn { background: var(--gold); color: var(--bg); border: none; padding: 14px; border-radius: 6px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; transition: 0.2s;}
     
     .btn-rm { background: transparent; color: var(--oxblood); border: 1px solid var(--oxblood); padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
     .btn-ok { background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
@@ -29,6 +31,9 @@
     .row { background: var(--surface); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); flex-wrap: wrap; gap: 10px; }
     .contagem { font-weight: 900; font-size: 1.3rem; color: var(--bg); background: var(--gold); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin-right: 10px; }
     .acoes-manuais { display: flex; gap: 8px; align-items: center; }
+
+    .log-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 0.9rem; opacity: 0.9; }
+    .log-row:last-child { border-bottom: none; }
   </style>
 </head>
 <body>
@@ -48,6 +53,22 @@
       <div class="sub">PAINEL ADMINISTRATIVO (TEMPO REAL)</div>
     </div>
 
+    <!-- MÓDULO DE EXPEDIENTE -->
+    <div class="ticket">
+      <h3 style="color: var(--gold); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-top: 0; text-transform: uppercase;">🕒 Status do Expediente</h3>
+      <div style="display: flex; flex-direction: column; align-items: center; margin-top: 15px;">
+        <div id="status-expediente-texto" style="font-size: 1.5rem; font-weight: bold; margin-bottom: 15px; color: var(--cream);">Carregando...</div>
+        <button id="btn-expediente" class="btn" onclick="toggleExpediente()">Aguarde...</button>
+      </div>
+      
+      <div style="margin-top: 25px; border-top: 1px solid var(--line); padding-top: 15px;">
+        <div style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: bold;">Registros de Hoje:</div>
+        <div id="historico-expediente">
+          <!-- O Histórico de aberturas e fechamentos entra aqui -->
+        </div>
+      </div>
+    </div>
+
     <h3 style="color: var(--oxblood); border-bottom: 1px solid var(--oxblood); padding-bottom: 5px;">⚠️ Aguardando Retorno (Na Rua)</h3>
     <div id="admin-pendentes">Nenhum motoboy na rua agora.</div>
 
@@ -56,8 +77,9 @@
   </div>
 
   <script type="module">
+    // IMPORTANTE: Foram adicionadas novas funções do Firebase aqui (setDoc, orderBy)
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, serverTimestamp, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, serverTimestamp, getDocs, limit, setDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBsKT8yM2UJ6dSonbab2ETSidi1KLF6GbM",
@@ -71,6 +93,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     let dataHoje = new Date().toISOString().split('T')[0];
+    let estadoAtualExpediente = "fechado";
 
     window.entrarComoAdmin = function() {
       if(document.getElementById("login-senha").value === "1234") {
@@ -83,7 +106,55 @@
     };
 
     function iniciarEscutaAdmin() {
-      // Escuta os motoboys que avisaram saída
+      // 1. Escuta o Status do Expediente
+      onSnapshot(doc(db, "sistema", "expediente"), (snapshot) => {
+        const btn = document.getElementById("btn-expediente");
+        const texto = document.getElementById("status-expediente-texto");
+        
+        if(snapshot.exists()) {
+          const status = snapshot.data().status;
+          estadoAtualExpediente = status;
+          
+          if(status === "aberto") {
+            texto.innerHTML = "🟢 EXPEDIENTE ABERTO";
+            texto.style.color = "var(--green)";
+            btn.innerHTML = "FECHAR EXPEDIENTE";
+            btn.style.background = "var(--oxblood)";
+            btn.style.color = "white";
+          } else {
+            texto.innerHTML = "🔴 EXPEDIENTE FECHADO";
+            texto.style.color = "var(--oxblood)";
+            btn.innerHTML = "ABRIR EXPEDIENTE";
+            btn.style.background = "var(--green)";
+            btn.style.color = "white";
+          }
+        } else {
+          // Se for a primeira vez que o sistema roda, cria o documento como fechado
+          setDoc(doc(db, "sistema", "expediente"), { status: "fechado" });
+        }
+      });
+
+      // 2. Escuta o Histórico do Expediente de Hoje
+      const qHist = query(collection(db, "historico_expediente"), where("data", "==", dataHoje), orderBy("hora", "desc"));
+      onSnapshot(qHist, (snapshot) => {
+         const div = document.getElementById("historico-expediente");
+         div.innerHTML = "";
+         if(snapshot.empty) {
+           div.innerHTML = "<span style='opacity: 0.5;'>Nenhum registro hoje.</span>";
+         }
+         snapshot.forEach(d => {
+           const p = d.data();
+           const acaoEstilo = p.acao === "abrir" ? "color: var(--green);" : "color: var(--oxblood);";
+           const acaoTexto = p.acao === "abrir" ? "Aberto" : "Fechado";
+           div.innerHTML += `
+            <div class="log-row">
+              <span style="font-weight: bold; ${acaoEstilo}">${acaoTexto}</span>
+              <span>às ${p.hora}</span>
+            </div>`;
+         });
+      });
+
+      // 3. Escuta os motoboys que avisaram saída (Pendentes)
       onSnapshot(collection(db, "pendentes"), (snapshot) => {
         const div = document.getElementById("admin-pendentes");
         div.innerHTML = "";
@@ -98,7 +169,7 @@
         });
       });
 
-      // Escuta as entregas concluídas hoje e agrupa por nome
+      // 4. Escuta as entregas concluídas hoje
       const qHoje = query(collection(db, "entregas"), where("data", "==", dataHoje));
       onSnapshot(qHoje, (snapshot) => {
         const contagem = {};
@@ -126,6 +197,27 @@
       });
     }
 
+    // Ação: Botão Abrir/Fechar Expediente
+    window.toggleExpediente = async function() {
+      const novoStatus = estadoAtualExpediente === "aberto" ? "fechado" : "aberto";
+      const horaAtual = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+      
+      const confirmacao = confirm(`Tem certeza que deseja ${novoStatus === 'aberto' ? 'ABRIR' : 'FECHAR'} o expediente agora?`);
+      
+      if(confirmacao) {
+        // Atualiza o documento mestre
+        await setDoc(doc(db, "sistema", "expediente"), { status: novoStatus });
+        
+        // Salva no log
+        await addDoc(collection(db, "historico_expediente"), {
+          acao: novoStatus === "aberto" ? "abrir" : "fechar",
+          data: dataHoje,
+          hora: horaAtual,
+          timestamp: serverTimestamp()
+        });
+      }
+    };
+
     // Aprova a chegada de quem estava na rua
     window.confirmarChegada = async function(docId, motoboy, qtd) {
       await deleteDoc(doc(db, "pendentes", docId));
@@ -145,18 +237,14 @@
 
     // Ação: Botão [-]
     window.removerEntregaManual = async function(motoboy) {
-      // Busca apenas 1 entrega de hoje deste motoboy específico para deletar
       const q = query(
         collection(db, "entregas"), 
         where("motoboy", "==", motoboy), 
         where("data", "==", dataHoje),
         limit(1)
       );
-      
       const snapshot = await getDocs(q);
-      
       if (!snapshot.empty) {
-        // Pega o ID desse documento e deleta
         const docId = snapshot.docs[0].id;
         await deleteDoc(doc(db, "entregas", docId));
       }
