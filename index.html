@@ -22,24 +22,19 @@
     
     .form-input { width: 100%; padding: 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--cream); font-size: 1rem; margin-bottom: 15px; }
     .btn { background: var(--gold); color: var(--bg); border: none; padding: 14px; border-radius: 6px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; }
-    .btn-rm { background: transparent; color: var(--oxblood); border: 1px solid var(--oxblood); padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-    .btn-ok { background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
     
     .row { background: var(--surface); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); }
     .contagem { font-weight: 900; font-size: 1.3rem; color: var(--bg); background: var(--gold); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
     
-    /* Perfil Modal */
     .perfil-box { background: #1a1a1a; border: 1px solid var(--gold); border-radius: 8px; padding: 20px; margin-top: 20px; text-align: left; }
     .perfil-stat { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 1.1rem; border-bottom: 1px dashed var(--line); padding-bottom: 5px; }
 
-    /* Animações de Fogo */
     @keyframes firePulse { 0% { transform: scale(1); color: var(--gold); text-shadow: 0 0 5px var(--gold); } 50% { transform: scale(1.03); color: var(--oxblood); text-shadow: 0 0 10px var(--oxblood); } 100% { transform: scale(1); color: var(--gold); text-shadow: 0 0 5px var(--gold); } }
     .animacao-fogo { font-size: clamp(0.75rem, 3.8vw, 1.2rem); font-weight: 900; text-transform: uppercase; animation: firePulse 1.5s infinite; text-align: center; width: 100%; white-space: nowrap; }
 
     @keyframes firePulseForte { 0% { transform: scale(1); color: var(--oxblood); text-shadow: 0 0 8px var(--oxblood); } 50% { transform: scale(1.04); color: var(--gold); text-shadow: 0 0 15px var(--gold); } 100% { transform: scale(1); color: var(--oxblood); text-shadow: 0 0 8px var(--oxblood); } }
     .animacao-fogo-forte { font-size: clamp(0.6rem, 2.7vw, 1rem); font-weight: 900; text-transform: uppercase; animation: firePulseForte 0.8s infinite; text-align: center; width: 100%; white-space: nowrap; }
 
-    /* CSS MODO SOBERANO */
     .soberano-body { background-color: #310d1c !important; font-family: 'Georgia', serif !important; }
     .rei-frame-1 { position: fixed; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid #d4af37; pointer-events: none; z-index: 100; box-sizing: border-box; }
     .rei-frame-2 { position: fixed; top: 12px; left: 12px; right: 12px; bottom: 12px; border: 1px solid rgba(212, 175, 55, 0.3); pointer-events: none; z-index: 100; box-sizing: border-box; }
@@ -71,21 +66,13 @@
 </head>
 <body id="body-main">
 
-  <!-- TELA DE LOGIN -->
   <div id="tela-login" class="login-container">
     <h2 style="color: var(--cream); margin-top: 0;">LEBLON <span style="color: var(--gold);">PRIME</span></h2>
-    <p style="opacity: 0.8; font-size: 0.9rem;">Identifique-se para entrar</p>
-    
-    <input type="text" id="login-nome" placeholder="Seu Nome (Entregador)" class="form-input">
-    <button class="btn" onclick="entrarComoEntregador()" style="margin-bottom: 20px;">ENTRAR COMO MOTOBOY</button>
-    
-    <hr style="border-color: var(--line); margin: 20px 0;">
-    
-    <input type="password" id="login-senha" placeholder="Senha do Admin" class="form-input">
-    <button class="btn" onclick="entrarComoAdmin()" style="background: var(--oxblood); color: white;">ENTRAR NO PAINEL</button>
+    <p style="opacity: 0.8; font-size: 0.9rem;">Área do Entregador</p>
+    <input type="text" id="login-nome" placeholder="Seu Nome" class="form-input">
+    <button class="btn" onclick="entrarComoEntregador()">ACESSAR MINHA COMANDA</button>
   </div>
 
-  <!-- TELA DO MOTOBOY - MODO NORMAL (< 30 ENTREGAS) -->
   <div id="tela-motoboy-normal" class="escondido ticket-app">
     <div class="header">
       <h1>OLÁ, <span id="motoboy-nome-display" style="color: var(--oxblood);"></span>!</h1>
@@ -96,7 +83,6 @@
       <div style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px;">ENTREGAS APROVADAS HOJE</div>
       <div class="contagem" id="motoboy-qtd" style="width: 85px; height: 85px; font-size: 2.5rem; margin: 0 auto 25px;">0</div>
       
-      <!-- Container das Animações de Fogo -->
       <div id="mensagens-fogo"></div>
       
       <div id="area-saida">
@@ -122,7 +108,6 @@
     </div>
   </div>
 
-  <!-- TELA DO MOTOBOY - MODO SOBERANO (>= 30 ENTREGAS) -->
   <div id="animacao-forja" class="anim-overlay escondido">
       <div id="texto-digitado" style="font-size: clamp(1.1rem, 5vw, 1.4rem); color: #d4af37; text-align: center; font-style: italic; padding: 0 30px; line-height: 1.4;"></div>
       <div id="coroa-forjada" class="escondido surge-anim" style="text-align: center; margin-top: 35px;">
@@ -134,7 +119,6 @@
   <div id="tela-motoboy-rei" class="escondido ticket-app" style="position: relative; z-index: 101;">
       <div class="rei-frame-1"></div>
       <div class="rei-frame-2"></div>
-      
       <div class="coroa-topo">👑</div>
       <h1 class="rei-nome">REI <span id="rei-nome-display"></span></h1>
       <div class="rei-sub">Soberano das Entregas</div>
@@ -143,7 +127,6 @@
       <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
           <div style="color: #d4b86a; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">ENTREGAS APROVADAS HOJE</div>
           <div class="contagem-rei" id="motoboy-qtd-rei">30</div>
-
           <div class="placa-dourada">A REALEZA DOMINA A ÁREA</div>
 
           <div id="area-saida-rei" style="width: 100%;">
@@ -161,25 +144,9 @@
       </div>
   </div>
 
-  <!-- TELA DO ADMIN -->
-  <div id="tela-admin" class="escondido ticket-app" style="max-width: 800px;">
-    <div class="header">
-      <h1>LEBLON <span style="color: var(--oxblood);">PRIME</span></h1>
-      <div class="sub">PAINEL ADMINISTRATIVO (TEMPO REAL)</div>
-      <button onclick="sair()" style="margin-top: 10px; background: transparent; color: var(--oxblood); border: none; cursor: pointer;">[ Fechar Painel ]</button>
-    </div>
-
-    <h3 style="color: var(--oxblood); border-bottom: 1px solid var(--oxblood); padding-bottom: 5px;">⚠️ Aguardando Retorno (Na Rua)</h3>
-    <div id="admin-pendentes">Nenhum motoboy na rua agora.</div>
-
-    <h3 style="color: var(--gold); border-bottom: 1px solid var(--line); padding-bottom: 5px; margin-top: 30px;">✅ Concluídas Hoje</h3>
-    <div id="admin-concluidas">Carregando...</div>
-  </div>
-
-  <!-- FIREBASE CONFIGURAÇÃO -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBsKT8yM2UJ6dSonbab2ETSidi1KLF6GbM",
@@ -199,16 +166,6 @@
     const somCoroacao = new Audio("https://actions.google.com/sounds/v1/fanfares/triumphant_fanfare.ogg");
     somCoroacao.volume = 0.8;
 
-    window.entrarComoAdmin = function() {
-      if(document.getElementById("login-senha").value === "1234") {
-        document.getElementById("tela-login").classList.add("escondido");
-        document.getElementById("tela-admin").classList.remove("escondido");
-        iniciarEscutaAdmin();
-      } else {
-        alert("Senha Incorreta!");
-      }
-    };
-
     window.entrarComoEntregador = function() {
       const nome = document.getElementById("login-nome").value.trim().toUpperCase();
       if(nome) {
@@ -220,9 +177,7 @@
       }
     };
 
-    window.sair = function() {
-      location.reload(); 
-    };
+    window.sair = function() { location.reload(); };
 
     window.togglePerfil = function() {
       const box = document.getElementById("perfil-dados");
@@ -230,17 +185,14 @@
       if(!box.classList.contains("escondido")) calcularEstatisticas();
     };
 
-    // --- LÓGICA DO MOTOBOY (COM GAMIFICAÇÃO) ---
     function iniciarEscutaMotoboy() {
       const qEntregas = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje));
       onSnapshot(qEntregas, (snapshot) => {
         const qtd = snapshot.size;
         
-        // Atualiza os contadores
         document.getElementById("motoboy-qtd").innerText = qtd;
         document.getElementById("motoboy-qtd-rei").innerText = qtd;
 
-        // Lógica Visual do Fogo (Modo Normal)
         const msgFogo = document.getElementById("mensagens-fogo");
         if(qtd >= 20 && qtd < 30) {
             msgFogo.innerHTML = '<div class="animacao-fogo-forte" style="margin-bottom: 25px;">🔥🔥 AS CHAMAS COMEÇAM SE ESPALHAR! 🔥🔥</div>';
@@ -250,18 +202,15 @@
             msgFogo.innerHTML = '';
         }
 
-        // Lógica do Modo Soberano
         if(qtd >= 30) {
             verificarAtivacaoSoberano();
         } else {
-            // Se cair para menos de 30 (admin desfez entrega), volta pro modo normal
             document.getElementById("body-main").classList.remove("soberano-body");
             document.getElementById("tela-motoboy-rei").classList.add("escondido");
             document.getElementById("tela-motoboy-normal").classList.remove("escondido");
         }
       });
 
-      // Escuta se ele está em rota
       const qPendentes = query(collection(db, "pendentes"), where("motoboy", "==", usuarioAtual));
       onSnapshot(qPendentes, (snapshot) => {
         if(snapshot.empty) {
@@ -282,13 +231,11 @@
         document.getElementById("tela-motoboy-normal").classList.add("escondido");
         document.getElementById("body-main").classList.add("soberano-body");
 
-        // Se já viu a animação hoje, pula direto pro painel do Rei
         if(sessionStorage.getItem('meta_30_animada_' + usuarioAtual)) {
             document.getElementById("tela-motoboy-rei").classList.remove("escondido");
             return;
         }
 
-        // Se não viu, executa a Animação Épica da Forja
         const texto = "Você acaba vendo algo saindo das chamas e sendo forjado! De repente percebe que apareceu...";
         const elTexto = document.getElementById("texto-digitado");
         const elCoroa = document.getElementById("coroa-forjada");
@@ -308,7 +255,7 @@
                 setTimeout(() => {
                     elCoroa.classList.remove("escondido");
                     sessionStorage.setItem('meta_30_animada_' + usuarioAtual, 'sim');
-                    somCoroacao.play().catch(e => console.log("Áudio bloqueado sem clique prévio"));
+                    somCoroacao.play().catch(e => console.log("Áudio bloqueado"));
 
                     setTimeout(() => {
                         painelRei.classList.remove("escondido");
@@ -347,46 +294,6 @@
       document.getElementById("stat-mes").innerText = contMes;
       document.getElementById("stat-total").innerText = snapshot.size;
     }
-
-    // --- LÓGICA DO ADMIN ---
-    function iniciarEscutaAdmin() {
-      onSnapshot(collection(db, "pendentes"), (snapshot) => {
-        const div = document.getElementById("admin-pendentes");
-        div.innerHTML = "";
-        if(snapshot.empty) div.innerHTML = "<p>Nenhum motoboy na rua.</p>";
-        snapshot.forEach((d) => {
-          const p = d.data();
-          div.innerHTML += `
-            <div class="row" style="border-color: var(--oxblood);">
-              <div><b>${p.motoboy}</b> levou ${p.qtd} pedido(s) às ${p.hora}</div>
-              <button class="btn-ok" onclick="confirmarChegada('${d.id}', '${p.motoboy}', ${p.qtd})">CONFIRMAR RETORNO</button>
-            </div>`;
-        });
-      });
-
-      const qHoje = query(collection(db, "entregas"), where("data", "==", dataHoje));
-      onSnapshot(qHoje, (snapshot) => {
-        const contagem = {};
-        snapshot.forEach(d => {
-          const nome = d.data().motoboy;
-          contagem[nome] = (contagem[nome] || 0) + 1;
-        });
-        
-        const div = document.getElementById("admin-concluidas");
-        div.innerHTML = "";
-        if(Object.keys(contagem).length === 0) div.innerHTML = "<p>Nenhuma entrega concluída hoje ainda.</p>";
-        for (const [nome, qtd] of Object.entries(contagem)) {
-          div.innerHTML += `<div class="row"><div style="font-size: 1.2rem; font-weight: bold;">${nome}</div><div class="contagem">${qtd}</div></div>`;
-        }
-      });
-    }
-
-    window.confirmarChegada = async function(docId, motoboy, qtd) {
-      await deleteDoc(doc(db, "pendentes", docId));
-      for(let i=0; i<qtd; i++){
-        await addDoc(collection(db, "entregas"), { motoboy: motoboy, data: dataHoje, timestamp: serverTimestamp() });
-      }
-    };
   </script>
 </body>
 </html>
