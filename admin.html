@@ -22,10 +22,13 @@
     
     .form-input { width: 100%; padding: 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--cream); font-size: 1rem; margin-bottom: 15px; }
     .btn { background: var(--gold); color: var(--bg); border: none; padding: 14px; border-radius: 6px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; }
-    .btn-ok { background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; }
     
-    .row { background: var(--surface); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); }
-    .contagem { font-weight: 900; font-size: 1.3rem; color: var(--bg); background: var(--gold); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
+    .btn-rm { background: transparent; color: var(--oxblood); border: 1px solid var(--oxblood); padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .btn-ok { background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    
+    .row { background: var(--surface); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); flex-wrap: wrap; gap: 10px; }
+    .contagem { font-weight: 900; font-size: 1.3rem; color: var(--bg); background: var(--gold); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin-right: 10px; }
+    .acoes-manuais { display: flex; gap: 8px; align-items: center; }
   </style>
 </head>
 <body>
@@ -54,7 +57,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, serverTimestamp, getDocs, limit } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBsKT8yM2UJ6dSonbab2ETSidi1KLF6GbM",
@@ -80,6 +83,7 @@
     };
 
     function iniciarEscutaAdmin() {
+      // Escuta os motoboys que avisaram saída
       onSnapshot(collection(db, "pendentes"), (snapshot) => {
         const div = document.getElementById("admin-pendentes");
         div.innerHTML = "";
@@ -94,6 +98,7 @@
         });
       });
 
+      // Escuta as entregas concluídas hoje e agrupa por nome
       const qHoje = query(collection(db, "entregas"), where("data", "==", dataHoje));
       onSnapshot(qHoje, (snapshot) => {
         const contagem = {};
@@ -105,16 +110,55 @@
         const div = document.getElementById("admin-concluidas");
         div.innerHTML = "";
         if(Object.keys(contagem).length === 0) div.innerHTML = "<p>Nenhuma entrega concluída hoje ainda.</p>";
+        
         for (const [nome, qtd] of Object.entries(contagem)) {
-          div.innerHTML += `<div class="row"><div style="font-size: 1.2rem; font-weight: bold;">${nome}</div><div class="contagem">${qtd}</div></div>`;
+          div.innerHTML += `
+            <div class="row">
+              <div style="font-size: 1.2rem; font-weight: bold; flex: 1; min-width: 150px;">${nome}</div>
+              
+              <div class="acoes-manuais">
+                <div class="contagem">${qtd}</div>
+                <button class="btn-ok" style="background: var(--gold); color: var(--bg); font-size: 1.3rem; padding: 4px 12px;" onclick="adicionarEntregaManual('${nome}')" title="Adicionar 1 entrega">+</button>
+                <button class="btn-rm" style="font-size: 1.3rem; padding: 4px 12px;" onclick="removerEntregaManual('${nome}')" title="Remover 1 entrega">-</button>
+              </div>
+            </div>`;
         }
       });
     }
 
+    // Aprova a chegada de quem estava na rua
     window.confirmarChegada = async function(docId, motoboy, qtd) {
       await deleteDoc(doc(db, "pendentes", docId));
       for(let i=0; i<qtd; i++){
         await addDoc(collection(db, "entregas"), { motoboy: motoboy, data: dataHoje, timestamp: serverTimestamp() });
+      }
+    };
+
+    // Ação: Botão [+]
+    window.adicionarEntregaManual = async function(motoboy) {
+      await addDoc(collection(db, "entregas"), { 
+        motoboy: motoboy, 
+        data: dataHoje, 
+        timestamp: serverTimestamp() 
+      });
+    };
+
+    // Ação: Botão [-]
+    window.removerEntregaManual = async function(motoboy) {
+      // Busca apenas 1 entrega de hoje deste motoboy específico para deletar
+      const q = query(
+        collection(db, "entregas"), 
+        where("motoboy", "==", motoboy), 
+        where("data", "==", dataHoje),
+        limit(1)
+      );
+      
+      const snapshot = await getDocs(q);
+      
+      if (!snapshot.empty) {
+        // Pega o ID desse documento e deleta
+        const docId = snapshot.docs[0].id;
+        await deleteDoc(doc(db, "entregas", docId));
       }
     };
   </script>
