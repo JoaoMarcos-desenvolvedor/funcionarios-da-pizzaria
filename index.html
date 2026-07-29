@@ -22,6 +22,7 @@
     
     .form-input { width: 100%; padding: 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--cream); font-size: 1rem; margin-bottom: 15px; }
     .btn { background: var(--gold); color: var(--bg); border: none; padding: 14px; border-radius: 6px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; }
+    .btn:disabled { background: #555; color: #888; cursor: not-allowed; }
     
     .row { background: var(--surface); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); }
     .contagem { font-weight: 900; font-size: 1.3rem; color: var(--bg); background: var(--gold); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; }
@@ -30,33 +31,10 @@
     .perfil-stat { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 1.1rem; border-bottom: 1px dashed var(--line); padding-bottom: 5px; }
 
     /* ANIMAÇÃO DO CUPOM DOURADO */
-    .cupom-dourado-wrapper {
-        position: relative;
-        padding: 15px;
-        border-radius: 8px;
-        background: linear-gradient(45deg, #d4af37, #fff2a8, #8a6112, #d4af37);
-        background-size: 300% 300%;
-        animation: reluzente 3s ease infinite;
-        text-align: center;
-        box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
-        margin-bottom: 25px;
-        color: #310d1c;
-        border: 2px solid #fff;
-        overflow: hidden;
-        width: 100%;
-    }
-    .cupom-dourado-wrapper::after {
-        content: '';
-        position: absolute;
-        top: 0; left: -150%; width: 50%; height: 100%;
-        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 100%);
-        transform: skewX(-25deg);
-        animation: brilhoFeixe 4s infinite;
-        pointer-events: none;
-    }
+    .cupom-dourado-wrapper { position: relative; padding: 15px; border-radius: 8px; background: linear-gradient(45deg, #d4af37, #fff2a8, #8a6112, #d4af37); background-size: 300% 300%; animation: reluzente 3s ease infinite; text-align: center; box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4); margin-bottom: 25px; color: #310d1c; border: 2px solid #fff; overflow: hidden; width: 100%; }
+    .cupom-dourado-wrapper::after { content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: brilhoFeixe 4s infinite; pointer-events: none; }
     @keyframes reluzente { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
     @keyframes brilhoFeixe { 0% { left: -150%; } 20% { left: 150%; } 100% { left: 150%; } }
-    
     .cupom-titulo { font-size: 1.2rem; font-weight: 900; margin: 0 0 5px 0; letter-spacing: 1px; }
     .cupom-texto { font-size: 0.9rem; font-weight: bold; margin: 0; opacity: 0.9; }
 
@@ -86,9 +64,9 @@
     
     .rei-input { background: #1a050d !important; border: 1px solid rgba(212, 175, 55, 0.5) !important; color: #fff !important; font-size: 2rem !important; width: 100px !important; height: 65px !important; margin: 0 auto 25px !important; display: block !important; text-align: center !important; border-radius: 6px !important; box-shadow: inset 0 3px 6px rgba(0,0,0,0.8) !important; font-family: 'Georgia', serif !important; transition: 0.2s; }
     .btn-rei-acao { background: linear-gradient(to bottom, #f3d46a 0%, #c4993a 100%); color: #310d1c; padding: 18px; width: 100%; display: block; border-radius: 6px; font-size: clamp(1.1rem, 4.5vw, 1.3rem); font-weight: bold; cursor: pointer; text-transform: uppercase; border: none; border-bottom: 4px solid #6b4a0e; box-shadow: 0 6px 15px rgba(0,0,0,0.7); font-family: 'Georgia', serif; }
+    .btn-rei-acao:disabled { background: #555; color: #888; cursor: not-allowed; border-bottom-color: #333; box-shadow: none; }
     
     .anim-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #260a15; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 1.5s ease-in-out; }
-    
     @keyframes surgeCoroa { from { opacity: 0; transform: translateY(20px) scale(0.9); } to { opacity: 1; transform: translateY(0) scale(1); } }
     .surge-anim { animation: surgeCoroa 1.5s ease-out forwards; }
     @keyframes pulseCoroaEfeito { 0% { filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6)); transform: scale(1); } 50% { filter: drop-shadow(0 0 35px rgba(255, 242, 168, 0.9)); transform: scale(1.05); } 100% { filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.6)); transform: scale(1); } }
@@ -113,16 +91,20 @@
       <div class="sub">PAINEL DE DESPACHO</div>
     </div>
     
+    <!-- NOVO: AVISO DE EXPEDIENTE FECHADO (NORMAL) -->
+    <div id="aviso-fechado-normal" class="escondido" style="background: var(--oxblood); color: white; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 20px; font-weight: bold; text-transform: uppercase;">
+        🔴 Expediente Fechado
+    </div>
+    
     <div class="row" style="flex-direction: column; text-align: center; padding: 20px; border:none; background:transparent;">
       
-      <!-- ESPAÇO DO CUPOM DOURADO -->
       <div id="area-cupom" class="cupom-dourado-wrapper escondido">
           <p class="cupom-titulo">🏆 ENTREGADOR DA SEMANA 🏆</p>
           <p class="cupom-texto">Você recebeu o Cupom Dourado!</p>
           <p style="font-size: 0.75rem; margin-top: 5px; opacity: 0.8;">Válido até: <span id="cupom-validade-txt"></span></p>
       </div>
 
-      <div style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px;">ENTREGAS APROVADAS HOJE</div>
+      <div style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px; text-transform: uppercase;">Entregas no Turno Atual</div>
       <div class="contagem" id="motoboy-qtd" style="width: 85px; height: 85px; font-size: 2.5rem; margin: 0 auto 25px;">0</div>
       
       <div id="mensagens-fogo"></div>
@@ -130,7 +112,8 @@
       <div id="area-saida">
         <p style="font-weight: bold; margin-bottom: 10px;">Quantos pedidos está levando agora?</p>
         <input type="number" id="qtd-levar" value="1" min="1" max="10" class="form-input" style="text-align: center; font-size: 2rem; height: 60px; width: 100px; margin: 0 auto 15px;">
-        <button class="btn" onclick="avisarSaida()">AVISAR SAÍDA</button>
+        <!-- ID ADICIONADO PARA BLOQUEIO -->
+        <button id="btn-avisar-saida-normal" class="btn" onclick="avisarSaida()">AVISAR SAÍDA</button>
       </div>
 
       <div id="area-rota" class="escondido" style="background: var(--bg); padding: 15px; border: 1px solid var(--oxblood); border-radius: 8px; width: 100%; margin-top: 15px;">
@@ -167,14 +150,21 @@
       <div class="rei-divider"><span></span></div>
 
       <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
-          <div style="color: #d4b86a; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">ENTREGAS APROVADAS HOJE</div>
+          
+          <!-- NOVO: AVISO DE EXPEDIENTE FECHADO (REI) -->
+          <div id="aviso-fechado-rei" class="escondido" style="background: rgba(227, 24, 33, 0.8); color: white; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; border: 1px solid #ff4d4d; width: 100%;">
+              🔴 Expediente Fechado
+          </div>
+
+          <div style="color: #d4b86a; font-size: 0.85rem; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px;">Entregas no Turno Atual</div>
           <div class="contagem-rei" id="motoboy-qtd-rei">30</div>
           <div class="placa-dourada">A REALEZA DOMINA A ÁREA</div>
 
           <div id="area-saida-rei" style="width: 100%;">
               <p style="font-size: 1.1rem; color: #fff; margin-bottom: 15px;">Quantos pedidos está levando agora?</p>
               <input type="number" id="qtd-levar-rei" value="1" min="1" max="10" class="rei-input">
-              <button class="btn-rei-acao" onclick="avisarSaidaRei()">AVISAR SAÍDA</button>
+              <!-- ID ADICIONADO PARA BLOQUEIO -->
+              <button id="btn-avisar-saida-rei" class="btn-rei-acao" onclick="avisarSaidaRei()">AVISAR SAÍDA</button>
           </div>
 
           <div id="area-rota-rei" class="escondido" style="background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.4); padding: 25px 15px; border-radius: 6px; width: 100%; margin-top: 15px;">
@@ -188,7 +178,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs, doc, getDoc, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBsKT8yM2UJ6dSonbab2ETSidi1KLF6GbM",
@@ -207,9 +197,12 @@
     let mesAtual = dataHoje.substring(0, 7);
     const somCoroacao = new Audio("https://actions.google.com/sounds/v1/fanfares/triumphant_fanfare.ogg");
     somCoroacao.volume = 0.8;
+    
+    // VARIAVEIS DE CONTROLE DE EXPEDIENTE
+    let expedienteAberto = false;
+    let timestampUltimaAbertura = null; // Guarda o momento (em firebase timestamp) que abriu
 
     window.entrarComoEntregador = async function() {
-      // 1. PEDE PERMISSÃO PARA NOTIFICAÇÕES ASSIM QUE CLICA NO BOTÃO
       if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
           Notification.requestPermission();
       }
@@ -217,10 +210,7 @@
       const nome = document.getElementById("login-nome").value.trim().toUpperCase();
       const senha = document.getElementById("login-senha").value.trim();
       
-      if(!nome || !senha) {
-          alert("Preencha o seu nome e a sua senha!");
-          return;
-      }
+      if(!nome || !senha) return alert("Preencha o seu nome e a sua senha!");
 
       const btn = document.getElementById("btn-entrar");
       btn.innerText = "Verificando...";
@@ -235,21 +225,22 @@
             document.getElementById("tela-login").classList.add("escondido");
             document.getElementById("motoboy-nome-display").innerText = nome;
             document.getElementById("rei-nome-display").innerText = nome;
-            iniciarEscutaMotoboy();
+            
+            // PRIMEIRO OBTEM O STATUS DO EXPEDIENTE ANTES DE INICIAR O RESTO
+            obterStatusExpediente();
           } else {
-            alert("Nome ou Senha incorretos! Peça para o restaurante criar seu acesso.");
+            alert("Nome ou Senha incorretos!");
             btn.innerText = "ACESSAR MINHA COMANDA";
             btn.disabled = false;
           }
       } catch (e) {
-          alert("Erro de conexão. Tente novamente.");
+          alert("Erro de conexão.");
           btn.innerText = "ACESSAR MINHA COMANDA";
           btn.disabled = false;
       }
     };
 
     window.sair = function() { location.reload(); };
-
     window.togglePerfil = function() {
       const box = document.getElementById("perfil-dados");
       box.classList.toggle("escondido");
@@ -257,41 +248,73 @@
     };
 
     function dispararNotificacaoCupom() {
-        // Faz o celular vibrar se tiver suporte (Padrão: vibra, pausa, vibra, pausa, vibra longo)
-        if ("vibrate" in navigator) {
-            navigator.vibrate([200, 100, 200, 100, 500]);
-        }
-
-        // Exibe a notificação na barra do celular
+        if ("vibrate" in navigator) navigator.vibrate([200, 100, 200, 100, 500]);
         if ("Notification" in window && Notification.permission === "granted") {
-            new Notification("🏆 CUPOM DOURADO!", {
-                body: "Parabéns! O restaurante acabou de enviar o Cupom Dourado para o seu painel!",
-                requireInteraction: true // Faz a notificação ficar na tela até ele puxar/fechar
-            });
+            new Notification("🏆 CUPOM DOURADO!", { body: "Parabéns! O restaurante enviou o Cupom Dourado para o seu painel!", requireInteraction: true });
         }
     }
 
-    function iniciarEscutaMotoboy() {
-      // Variável de controle para não apitar ao recarregar a página se ele JÁ TIVER o cupom
-      let controleCupomAnterior = null;
+    // NOVA FUNÇÃO: ESCUTA O STATUS DO EXPEDIENTE PARA BLOQUEIO E RESET
+    function obterStatusExpediente() {
+        onSnapshot(doc(db, "sistema", "expediente"), async (snapshot) => {
+            if(snapshot.exists()) {
+                const status = snapshot.data().status;
+                const btnNormal = document.getElementById("btn-avisar-saida-normal");
+                const btnRei = document.getElementById("btn-avisar-saida-rei");
+                const avisoNormal = document.getElementById("aviso-fechado-normal");
+                const avisoRei = document.getElementById("aviso-fechado-rei");
 
+                if(status === "aberto") {
+                    expedienteAberto = true;
+                    btnNormal.disabled = false;
+                    btnRei.disabled = false;
+                    avisoNormal.classList.add("escondido");
+                    avisoRei.classList.add("escondido");
+                    
+                    // Busca a QUE HORAS foi aberto para só contar entregas DAÍ PRA FRENTE
+                    const qHist = query(collection(db, "historico_expediente"), where("acao", "==", "abrir"), orderBy("timestamp", "desc"), limit(1));
+                    const ultAberturaSnap = await getDocs(qHist);
+                    if(!ultAberturaSnap.empty) {
+                        timestampUltimaAbertura = ultAberturaSnap.docs[0].data().timestamp;
+                    } else {
+                        timestampUltimaAbertura = null; 
+                    }
+                    iniciarEscutaMotoboy(); // Reinicia a escuta com o novo tempo base
+                } else {
+                    expedienteAberto = false;
+                    btnNormal.disabled = true;
+                    btnRei.disabled = true;
+                    avisoNormal.classList.remove("escondido");
+                    avisoRei.classList.remove("escondido");
+                    
+                    // SE FECHOU, ZERA A TELA NA HORA
+                    document.getElementById("motoboy-qtd").innerText = "0";
+                    document.getElementById("motoboy-qtd-rei").innerText = "0";
+                    document.getElementById("mensagens-fogo").innerHTML = "";
+                    
+                    // Remove Rei se estava ativo e recarrega perfil se estiver aberto
+                    document.getElementById("body-main").classList.remove("soberano-body");
+                    document.getElementById("tela-motoboy-rei").classList.add("escondido");
+                    document.getElementById("tela-motoboy-normal").classList.remove("escondido");
+                }
+            }
+        });
+    }
+
+    let unsubscribeEntregas = null;
+
+    function iniciarEscutaMotoboy() {
+      let controleCupomAnterior = null;
       onSnapshot(doc(db, "motoboys", usuarioAtual), (docSnap) => {
           if(docSnap.exists()) {
               const dados = docSnap.data();
               const divCupom = document.getElementById("area-cupom");
               const temCupom = dados.cupomValidade && dados.cupomValidade >= dataHoje;
-
               if(temCupom) {
                   divCupom.classList.remove("escondido");
                   const p = dados.cupomValidade.split('-');
                   document.getElementById("cupom-validade-txt").innerText = `${p[2]}/${p[1]}/${p[0]}`;
-
-  // Se a página carregou agora, controleCupomAnterior é null (não apita).
-                  // Se ele estava logado sem cupom (false) e agora virou true, APITA!
-                  if(controleCupomAnterior === false) {
-                      dispararNotificacaoCupom();
-                  }
-                  
+                  if(controleCupomAnterior === false) dispararNotificacaoCupom();
                   controleCupomAnterior = true;
               } else {
                   divCupom.classList.add("escondido");
@@ -300,21 +323,31 @@
           }
       });
 
-      const qEntregas = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje));
-      onSnapshot(qEntregas, (snapshot) => {
+      // Se já existia uma escuta de entregas rodando, cancela ela antes de criar outra
+      if(unsubscribeEntregas) unsubscribeEntregas();
+
+      // MUDANÇA AQUI: Só busca as entregas de HOJE que aconteceram DEPOIS do último "Abrir Expediente"
+      let restricoesBusca = [where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje)];
+      
+      // Se tivermos a hora que o expediente abriu, só trazemos o que foi entregue DEPOIS
+      if (timestampUltimaAbertura) {
+          restricoesBusca.push(where("timestamp", ">=", timestampUltimaAbertura));
+      }
+      
+      const qEntregas = query(collection(db, "entregas"), ...restricoesBusca);
+      
+      unsubscribeEntregas = onSnapshot(qEntregas, (snapshot) => {
+        // Se o expediente estiver fechado, força a leitura a ser zero e ignora o firebase
+        if(!expedienteAberto) return;
+
         const qtd = snapshot.size;
-        
         document.getElementById("motoboy-qtd").innerText = qtd;
         document.getElementById("motoboy-qtd-rei").innerText = qtd;
 
         const msgFogo = document.getElementById("mensagens-fogo");
-        if(qtd >= 20 && qtd < 30) {
-            msgFogo.innerHTML = '<div class="animacao-fogo-forte" style="margin-bottom: 25px;">🔥🔥 AS CHAMAS COMEÇAM SE ESPALHAR! 🔥🔥</div>';
-        } else if (qtd >= 10 && qtd < 20) {
-            msgFogo.innerHTML = '<div class="animacao-fogo" style="margin-bottom: 25px;">🔥 Você está começando a esquentar! 🔥</div>';
-        } else {
-            msgFogo.innerHTML = '';
-        }
+        if(qtd >= 20 && qtd < 30) { msgFogo.innerHTML = '<div class="animacao-fogo-forte" style="margin-bottom: 25px;">🔥🔥 AS CHAMAS COMEÇAM SE ESPALHAR! 🔥🔥</div>'; } 
+        else if (qtd >= 10 && qtd < 20) { msgFogo.innerHTML = '<div class="animacao-fogo" style="margin-bottom: 25px;">🔥 Você está começando a esquentar! 🔥</div>'; } 
+        else { msgFogo.innerHTML = ''; }
 
         if(qtd >= 30) {
             verificarAtivacaoSoberano();
@@ -344,12 +377,10 @@
     function verificarAtivacaoSoberano() {
         document.getElementById("tela-motoboy-normal").classList.add("escondido");
         document.getElementById("body-main").classList.add("soberano-body");
-
         if(sessionStorage.getItem('meta_30_animada_' + usuarioAtual)) {
             document.getElementById("tela-motoboy-rei").classList.remove("escondido");
             return;
         }
-
         const texto = "Você acaba vendo algo saindo das chamas e sendo forjado! De repente percebe que apareceu...";
         const elTexto = document.getElementById("texto-digitado");
         const elCoroa = document.getElementById("coroa-forjada");
@@ -359,18 +390,14 @@
         animForja.classList.remove("escondido");
         elTexto.innerHTML = "";
         let i = 0;
-
         function digitar() {
             if (i < texto.length) {
-                elTexto.innerHTML += texto.charAt(i);
-                i++;
-                setTimeout(digitar, 40);
+                elTexto.innerHTML += texto.charAt(i); i++; setTimeout(digitar, 40);
             } else {
                 setTimeout(() => {
                     elCoroa.classList.remove("escondido");
                     sessionStorage.setItem('meta_30_animada_' + usuarioAtual, 'sim');
                     somCoroacao.play().catch(e => console.log("Áudio bloqueado"));
-
                     setTimeout(() => {
                         painelRei.classList.remove("escondido");
                         animForja.style.opacity = '0';
@@ -386,6 +413,8 @@
     window.avisarSaidaRei = async function() { registrarSaida(document.getElementById("qtd-levar-rei").value); };
 
     async function registrarSaida(valorStr) {
+      if(!expedienteAberto) return alert("O expediente está fechado. Você não pode registrar saídas agora.");
+      
       const qtd = parseInt(valorStr);
       if(qtd > 10) { alert("O limite máximo permitido são 10 pedidos por vez!"); return; }
       if(qtd < 1) { alert("Quantidade inválida!"); return; }
@@ -398,6 +427,7 @@
     }
 
     async function calcularEstatisticas() {
+      // O Perfil mostra o Total do DIA (tudo que fez no dia, independente do turno) e Mês. Isso não altera.
       const qTotal = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual));
       const snapshot = await getDocs(qTotal);
       let contMes = 0; let contHoje = 0;
@@ -414,24 +444,3 @@
   </script>
 </body>
 </html>
-
-                  // Se a página carregou agora, controleCupomAnterior é null (não apita).
-                  // Se ele estava logado sem cupom (false) e agora virou true, APITA!
-                  if(controleCupomAnterior === false) {
-                      dispararNotificacaoCupom();
-                  }
-                  
-                  controleCupomAnterior = true;
-              } else {
-                  divCupom.classList.add("escondido");
-                  controleCupomAnterior = false;
-              }
-          }
-      });
-
-      const qEntregas = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje));
-      onSnapshot(qEntregas, (snapshot) => {
-        const qtd = snapshot.size;
-        
-        document.getElementById("motoboy-qtd").innerText = qtd;
-        docu
