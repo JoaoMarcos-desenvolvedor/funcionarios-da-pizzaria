@@ -298,4 +298,42 @@
     }
 
     window.avisarSaida = async function() { registrarSaida(document.getElementById("qtd-levar").value); };
-    window.avisarSaidaRei = async function() { registrarSaida(document.getElementById("qtd-le
+    window.avisarSaidaRei = async function() { registrarSaida(document.getElementById("qtd-levar-rei").value); };
+
+    async function registrarSaida(valorStr) {
+      const qtd = parseInt(valorStr);
+      
+      // TRAVA DE SEGURANÇA ADICIONADA AQUI
+      if(qtd > 10) {
+          alert("O limite máximo permitido são 10 pedidos por vez!");
+          return;
+      }
+      if(qtd < 1) {
+          alert("Quantidade inválida!");
+          return;
+      }
+
+      await addDoc(collection(db, "pendentes"), {
+        motoboy: usuarioAtual,
+        qtd: qtd,
+        hora: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
+      });
+    }
+
+    async function calcularEstatisticas() {
+      const qTotal = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual));
+      const snapshot = await getDocs(qTotal);
+      let contMes = 0; let contHoje = 0;
+      
+      snapshot.forEach((doc) => {
+        const dados = doc.data();
+        if(dados.data === dataHoje) contHoje++;
+        if(dados.data.startsWith(mesAtual)) contMes++;
+      });
+      document.getElementById("stat-hoje").innerText = contHoje;
+      document.getElementById("stat-mes").innerText = contMes;
+      document.getElementById("stat-total").innerText = snapshot.size;
+    }
+  </script>
+</body>
+</html>
