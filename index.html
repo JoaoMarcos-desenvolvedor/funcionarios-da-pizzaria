@@ -54,16 +54,9 @@
         animation: brilhoFeixe 4s infinite;
         pointer-events: none;
     }
-    @keyframes reluzente {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-    }
-    @keyframes brilhoFeixe {
-        0% { left: -150%; }
-        20% { left: 150%; }
-        100% { left: 150%; }
-    }
+    @keyframes reluzente { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+    @keyframes brilhoFeixe { 0% { left: -150%; } 20% { left: 150%; } 100% { left: 150%; } }
+    
     .cupom-titulo { font-size: 1.2rem; font-weight: 900; margin: 0 0 5px 0; letter-spacing: 1px; }
     .cupom-texto { font-size: 0.9rem; font-weight: bold; margin: 0; opacity: 0.9; }
 
@@ -90,7 +83,6 @@
     
     .placa-dourada { position: relative; overflow: hidden; background: linear-gradient(to bottom, #f3d46a 0%, #c4993a 100%); color: #310d1c; padding: 14px 10px; font-weight: bold; font-size: clamp(0.85rem, 4vw, 1.1rem); text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; box-shadow: 0 6px 12px rgba(0,0,0,0.7), inset 0 2px 2px rgba(255,255,255,0.6); border-bottom: 3px solid #6b4a0e; margin: 0 auto 30px; width: 100%; text-align: center; }
     .placa-dourada::after { content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: feixeLuz 3s infinite; pointer-events: none; }
-    @keyframes feixeLuz { 0% { left: -150%; } 15% { left: 150%; } 100% { left: 150%; } }
     
     .rei-input { background: #1a050d !important; border: 1px solid rgba(212, 175, 55, 0.5) !important; color: #fff !important; font-size: 2rem !important; width: 100px !important; height: 65px !important; margin: 0 auto 25px !important; display: block !important; text-align: center !important; border-radius: 6px !important; box-shadow: inset 0 3px 6px rgba(0,0,0,0.8) !important; font-family: 'Georgia', serif !important; transition: 0.2s; }
     .btn-rei-acao { background: linear-gradient(to bottom, #f3d46a 0%, #c4993a 100%); color: #310d1c; padding: 18px; width: 100%; display: block; border-radius: 6px; font-size: clamp(1.1rem, 4.5vw, 1.3rem); font-weight: bold; cursor: pointer; text-transform: uppercase; border: none; border-bottom: 4px solid #6b4a0e; box-shadow: 0 6px 15px rgba(0,0,0,0.7); font-family: 'Georgia', serif; }
@@ -217,6 +209,11 @@
     somCoroacao.volume = 0.8;
 
     window.entrarComoEntregador = async function() {
+      // 1. PEDE PERMISSÃO PARA NOTIFICAÇÕES ASSIM QUE CLICA NO BOTÃO
+      if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+          Notification.requestPermission();
+      }
+
       const nome = document.getElementById("login-nome").value.trim().toUpperCase();
       const senha = document.getElementById("login-senha").value.trim();
       
@@ -259,19 +256,46 @@
       if(!box.classList.contains("escondido")) calcularEstatisticas();
     };
 
+    function dispararNotificacaoCupom() {
+        // Faz o celular vibrar se tiver suporte (Padrão: vibra, pausa, vibra, pausa, vibra longo)
+        if ("vibrate" in navigator) {
+            navigator.vibrate([200, 100, 200, 100, 500]);
+        }
+
+        // Exibe a notificação na barra do celular
+        if ("Notification" in window && Notification.permission === "granted") {
+            new Notification("🏆 CUPOM DOURADO!", {
+                body: "Parabéns! O restaurante acabou de enviar o Cupom Dourado para o seu painel!",
+                requireInteraction: true // Faz a notificação ficar na tela até ele puxar/fechar
+            });
+        }
+    }
+
     function iniciarEscutaMotoboy() {
-      // NOVA ESCUTA: Verifica se ele tem o cupom dourado
+      // Variável de controle para não apitar ao recarregar a página se ele JÁ TIVER o cupom
+      let controleCupomAnterior = null;
+
       onSnapshot(doc(db, "motoboys", usuarioAtual), (docSnap) => {
           if(docSnap.exists()) {
               const dados = docSnap.data();
               const divCupom = document.getElementById("area-cupom");
-              if(dados.cupomValidade && dados.cupomValidade >= dataHoje) {
+              const temCupom = dados.cupomValidade && dados.cupomValidade >= dataHoje;
+
+              if(temCupom) {
                   divCupom.classList.remove("escondido");
-                  // Converte YYYY-MM-DD para DD/MM/YYYY
                   const p = dados.cupomValidade.split('-');
                   document.getElementById("cupom-validade-txt").innerText = `${p[2]}/${p[1]}/${p[0]}`;
+
+  // Se a página carregou agora, controleCupomAnterior é null (não apita).
+                  // Se ele estava logado sem cupom (false) e agora virou true, APITA!
+                  if(controleCupomAnterior === false) {
+                      dispararNotificacaoCupom();
+                  }
+                  
+                  controleCupomAnterior = true;
               } else {
                   divCupom.classList.add("escondido");
+                  controleCupomAnterior = false;
               }
           }
       });
@@ -390,3 +414,24 @@
   </script>
 </body>
 </html>
+
+                  // Se a página carregou agora, controleCupomAnterior é null (não apita).
+                  // Se ele estava logado sem cupom (false) e agora virou true, APITA!
+                  if(controleCupomAnterior === false) {
+                      dispararNotificacaoCupom();
+                  }
+                  
+                  controleCupomAnterior = true;
+              } else {
+                  divCupom.classList.add("escondido");
+                  controleCupomAnterior = false;
+              }
+          }
+      });
+
+      const qEntregas = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje));
+      onSnapshot(qEntregas, (snapshot) => {
+        const qtd = snapshot.size;
+        
+        document.getElementById("motoboy-qtd").innerText = qtd;
+        docu
