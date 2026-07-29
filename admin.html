@@ -38,7 +38,6 @@
 </head>
 <body>
 
-  <!-- TELA DE LOGIN DO ADMIN -->
   <div id="tela-login" class="login-container">
     <h2 style="color: var(--cream); margin-top: 0;">LEBLON <span style="color: var(--gold);">PRIME</span></h2>
     <p style="opacity: 0.8; font-size: 0.9rem;">Controle do Responsável</p>
@@ -46,7 +45,6 @@
     <button class="btn" onclick="entrarComoAdmin()" style="background: var(--oxblood); color: white;">ENTRAR NO PAINEL</button>
   </div>
 
-  <!-- TELA DO ADMIN -->
   <div id="tela-admin" class="escondido ticket-app">
     <div class="header">
       <h1>LEBLON <span style="color: var(--oxblood);">PRIME</span></h1>
@@ -67,9 +65,9 @@
       </div>
     </div>
 
-    <!-- MÓDULO DE CADASTRO DE MOTOBOYS -->
+    <!-- MÓDULO DE CADASTRO E PREMIAÇÃO -->
     <div class="ticket">
-      <h3 style="color: var(--gold); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-top: 0; text-transform: uppercase;">🔐 Gerenciar Acessos (Entregadores)</h3>
+      <h3 style="color: var(--gold); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-top: 0; text-transform: uppercase;">🔐 Gerenciar e Premiar</h3>
       <div style="display: flex; gap: 10px; margin-bottom: 15px;">
         <input type="text" id="novo-moto-nome" placeholder="Nome do Entregador" class="form-input" style="margin-bottom: 0;">
         <input type="text" id="novo-moto-senha" placeholder="Senha (ex: 1234)" class="form-input" style="margin-bottom: 0; width: 150px;">
@@ -107,11 +105,8 @@
     let dataHoje = new Date().toISOString().split('T')[0];
     let estadoAtualExpediente = "fechado";
 
-    // CRIANDO A CAMPAINHA
     const somCampainha = new Audio("https://actions.google.com/sounds/v1/alarms/dinner_bell_triangle.ogg");
     somCampainha.volume = 1.0;
-    
-    // Variável para não tocar a campainha quando o sistema acaba de abrir
     let primeiraCargaPendentes = true;
 
     window.entrarComoAdmin = function() {
@@ -171,20 +166,32 @@
          });
       });
 
+      // ESCUTA DOS MOTOBOYS COM BOTÃO DO CUPOM DOURADO
       onSnapshot(collection(db, "motoboys"), (snapshot) => {
           const div = document.getElementById("lista-motoboys");
           div.innerHTML = "";
           if(snapshot.empty) div.innerHTML = "<p style='opacity: 0.5; font-size: 0.9rem;'>Nenhum motoboy cadastrado.</p>";
           snapshot.forEach(d => {
+              const p = d.data();
+              const hasCupom = p.cupomValidade && p.cupomValidade >= dataHoje;
+              
+              let botaoCupom = hasCupom 
+                ? `<button class="btn-rm" style="padding: 4px 10px; font-size: 0.8rem; color: #310d1c; background: #fcc010; border-color: #fcc010;" onclick="removerCupom('${d.id}')">🏆 ATIVO (TIRAR)</button>` 
+                : `<button class="btn-ok" style="padding: 4px 10px; font-size: 0.8rem; background: transparent; color: var(--gold); border: 1px solid var(--gold);" onclick="darCupom('${d.id}')">🏆 DAR CUPOM</button>`;
+
               div.innerHTML += `
-              <div class="row" style="padding: 10px 16px;">
-                  <div><b>${d.id}</b> <span style="font-size: 0.85rem; color: var(--gold); margin-left: 10px;">(Senha: ${d.data().senha})</span></div>
-                  <button class="btn-rm" style="padding: 4px 10px;" onclick="removerMotoboyDb('${d.id}')">X</button>
+              <div class="row" style="padding: 10px 16px; flex-direction: column; align-items: stretch; gap: 8px;">
+                  <div style="display: flex; justify-content: space-between; align-items: center;">
+                      <div><b>${d.id}</b> <span style="font-size: 0.85rem; color: var(--gold); margin-left: 10px;">(Senha: ${p.senha})</span></div>
+                      <button class="btn-rm" style="padding: 4px 10px;" onclick="removerMotoboyDb('${d.id}')">X</button>
+                  </div>
+                  <div style="display: flex; justify-content: flex-start;">
+                      ${botaoCupom}
+                  </div>
               </div>`;
           });
       });
 
-      // ESCUTA PENDENTES (AQUI ESTÁ A MUDANÇA DOS BOTÕES)
       onSnapshot(collection(db, "pendentes"), (snapshot) => {
         if (!primeiraCargaPendentes) {
             snapshot.docChanges().forEach((change) => {
@@ -238,11 +245,28 @@
       });
     }
 
+    // NOVAS FUNÇÕES DO CUPOM DOURADO
+    window.darCupom = async function(nome) {
+        // Calcula +7 dias a partir de hoje
+        const dataVencimento = new Date();
+        dataVencimento.setDate(dataVencimento.getDate() + 7);
+        const dataStr = dataVencimento.toISOString().split('T')[0];
+
+        if(confirm(`Deseja premiar ${nome} com o Cupom Dourado de Melhor da Semana?\nEle será válido até ${dataStr.split('-').reverse().join('/')}.`)) {
+            await setDoc(doc(db, "motoboys", nome), { cupomValidade: dataStr }, { merge: true });
+        }
+    };
+
+    window.removerCupom = async function(nome) {
+        if(confirm(`Deseja retirar o Cupom Dourado de ${nome}?`)) {
+            await setDoc(doc(db, "motoboys", nome), { cupomValidade: "" }, { merge: true });
+        }
+    };
+
     window.cadastrarMotoboy = async function() {
       const nome = document.getElementById("novo-moto-nome").value.trim().toUpperCase();
       const senha = document.getElementById("novo-moto-senha").value.trim();
-
-      if(!nome || !senha) return alert("Preencha o Nome e a Senha para criar o acesso!");
+      if(!nome || !senha) return alert("Preencha o Nome e a Senha!");
       
       await setDoc(doc(db, "motoboys", nome), { senha: senha });
       document.getElementById("novo-moto-nome").value = "";
@@ -251,7 +275,7 @@
     };
 
     window.removerMotoboyDb = async function(nome) {
-        if(confirm(`Tem certeza que deseja bloquear o acesso de ${nome}? Ele não poderá mais usar a comanda.`)) {
+        if(confirm(`Tem certeza que deseja bloquear o acesso de ${nome}?`)) {
             await deleteDoc(doc(db, "motoboys", nome));
         }
     };
@@ -279,11 +303,8 @@
       }
     };
 
-    // NOVA FUNÇÃO: CANCELAR SAÍDA
     window.cancelarSaida = async function(docId) {
-      const confirmacao = confirm("Atenção: Tem certeza que deseja CANCELAR essa saída? (O motoboy terá que enviar a quantidade novamente)");
-      if(confirmacao) {
-        // Apenas deleta o documento sem registrar entregas
+      if(confirm("Atenção: Tem certeza que deseja CANCELAR essa saída?")) {
         await deleteDoc(doc(db, "pendentes", docId));
       }
     };
