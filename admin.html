@@ -67,7 +67,7 @@
       </div>
     </div>
 
-    <!-- MÓDULO DE CADASTRO DE MOTOBOYS (NOVO) -->
+    <!-- MÓDULO DE CADASTRO DE MOTOBOYS -->
     <div class="ticket">
       <h3 style="color: var(--gold); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin-top: 0; text-transform: uppercase;">🔐 Gerenciar Acessos (Entregadores)</h3>
       <div style="display: flex; gap: 10px; margin-bottom: 15px;">
@@ -107,10 +107,19 @@
     let dataHoje = new Date().toISOString().split('T')[0];
     let estadoAtualExpediente = "fechado";
 
+    // CRIANDO A CAMPAINHA
+    const somCampainha = new Audio("https://actions.google.com/sounds/v1/alarms/dinner_bell_triangle.ogg");
+    somCampainha.volume = 1.0;
+    
+    // Variável para não tocar a campainha quando o sistema acaba de abrir
+    let primeiraCargaPendentes = true;
+
     window.entrarComoAdmin = function() {
       if(document.getElementById("login-senha").value === "1234") {
         document.getElementById("tela-login").classList.add("escondido");
         document.getElementById("tela-admin").classList.remove("escondido");
+        // Dá um pequeno "play" fantasma para o navegador autorizar o som no futuro
+        somCampainha.play().then(() => { somCampainha.pause(); somCampainha.currentTime = 0; }).catch(e => {});
         iniciarEscutaAdmin();
       } else {
         alert("Senha Incorreta!");
@@ -179,8 +188,19 @@
           });
       });
 
-      // 4. Escuta Pendentes
+      // 4. Escuta Pendentes E TOCA A CAMPAINHA
       onSnapshot(collection(db, "pendentes"), (snapshot) => {
+        // Toca a campainha apenas se for um pedido NOVO (não a primeira vez que abriu o painel)
+        if (!primeiraCargaPendentes) {
+            snapshot.docChanges().forEach((change) => {
+                if (change.type === "added") {
+                    somCampainha.currentTime = 0; // Zera o áudio
+                    somCampainha.play().catch(e => console.log("Áudio bloqueado pelo navegador", e));
+                }
+            });
+        }
+        primeiraCargaPendentes = false;
+
         const div = document.getElementById("admin-pendentes");
         div.innerHTML = "";
         if(snapshot.empty) div.innerHTML = "<p>Nenhum motoboy na rua.</p>";
