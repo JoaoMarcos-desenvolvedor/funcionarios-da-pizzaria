@@ -40,7 +40,6 @@
 
     @keyframes firePulse { 0% { transform: scale(1); color: var(--gold); text-shadow: 0 0 5px var(--gold); } 50% { transform: scale(1.03); color: var(--oxblood); text-shadow: 0 0 10px var(--oxblood); } 100% { transform: scale(1); color: var(--gold); text-shadow: 0 0 5px var(--gold); } }
     .animacao-fogo { font-size: clamp(0.75rem, 3.8vw, 1.2rem); font-weight: 900; text-transform: uppercase; animation: firePulse 1.5s infinite; text-align: center; width: 100%; white-space: nowrap; }
-
     @keyframes firePulseForte { 0% { transform: scale(1); color: var(--oxblood); text-shadow: 0 0 8px var(--oxblood); } 50% { transform: scale(1.04); color: var(--gold); text-shadow: 0 0 15px var(--gold); } 100% { transform: scale(1); color: var(--oxblood); text-shadow: 0 0 8px var(--oxblood); } }
     .animacao-fogo-forte { font-size: clamp(0.6rem, 2.7vw, 1rem); font-weight: 900; text-transform: uppercase; animation: firePulseForte 0.8s infinite; text-align: center; width: 100%; white-space: nowrap; }
 
@@ -48,20 +47,15 @@
     .soberano-body { background-color: #310d1c !important; font-family: 'Georgia', serif !important; }
     .rei-frame-1 { position: fixed; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid #d4af37; pointer-events: none; z-index: 100; box-sizing: border-box; }
     .rei-frame-2 { position: fixed; top: 12px; left: 12px; right: 12px; bottom: 12px; border: 1px solid rgba(212, 175, 55, 0.3); pointer-events: none; z-index: 100; box-sizing: border-box; }
-    
     .coroa-topo { font-size: clamp(2.5rem, 10vw, 3.5rem); filter: drop-shadow(0 4px 6px rgba(0,0,0,0.8)); margin-bottom: -10px; text-align: center; }
     .rei-nome { font-size: clamp(1.8rem, 8vw, 2.5rem); margin: 10px 0 5px; background: linear-gradient(to bottom, #fff2a8, #d4af37, #8a6112); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; filter: drop-shadow(0px 2px 2px rgba(0,0,0,0.8)); text-align: center;}
     .rei-sub { color: #e6cd8e; font-style: italic; font-size: clamp(1rem, 4vw, 1.2rem); margin-bottom: 5px; text-align: center;}
-    
     .rei-divider { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 15px auto 25px; width: 80%; max-width: 300px; z-index: 101; position: relative; }
     .rei-divider::before, .rei-divider::after { content: ''; height: 1px; background: rgba(212, 175, 55, 0.4); flex: 1; }
     .rei-divider span { display: inline-block; width: 8px; height: 8px; background: #d4af37; transform: rotate(45deg); }
-    
     .contagem-rei { width: clamp(110px, 35vw, 150px); height: clamp(110px, 35vw, 150px); border-radius: 50%; background: radial-gradient(circle at 40% 30%, #ffe885 0%, #d4af37 40%, #8a6112 100%); margin: 0 auto 30px; display: flex; align-items: center; justify-content: center; font-size: clamp(3rem, 10vw, 4.5rem); color: #310d1c; font-weight: bold; box-shadow: 0 0 0 3px #310d1c, 0 0 0 6px #d4af37, 0 15px 30px rgba(0,0,0,0.8); text-shadow: 0px 1px 1px rgba(255,255,255,0.4); }
-    
     .placa-dourada { position: relative; overflow: hidden; background: linear-gradient(to bottom, #f3d46a 0%, #c4993a 100%); color: #310d1c; padding: 14px 10px; font-weight: bold; font-size: clamp(0.85rem, 4vw, 1.1rem); text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; box-shadow: 0 6px 12px rgba(0,0,0,0.7), inset 0 2px 2px rgba(255,255,255,0.6); border-bottom: 3px solid #6b4a0e; margin: 0 auto 30px; width: 100%; text-align: center; }
     .placa-dourada::after { content: ''; position: absolute; top: 0; left: -150%; width: 50%; height: 100%; background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.7) 50%, rgba(255,255,255,0) 100%); transform: skewX(-25deg); animation: feixeLuz 3s infinite; pointer-events: none; }
-    
     .rei-input { background: #1a050d !important; border: 1px solid rgba(212, 175, 55, 0.5) !important; color: #fff !important; font-size: 2rem !important; width: 100px !important; height: 65px !important; margin: 0 auto 25px !important; display: block !important; text-align: center !important; border-radius: 6px !important; box-shadow: inset 0 3px 6px rgba(0,0,0,0.8) !important; font-family: 'Georgia', serif !important; transition: 0.2s; }
     .btn-rei-acao { background: linear-gradient(to bottom, #f3d46a 0%, #c4993a 100%); color: #310d1c; padding: 18px; width: 100%; display: block; border-radius: 6px; font-size: clamp(1.1rem, 4.5vw, 1.3rem); font-weight: bold; cursor: pointer; text-transform: uppercase; border: none; border-bottom: 4px solid #6b4a0e; box-shadow: 0 6px 15px rgba(0,0,0,0.7); font-family: 'Georgia', serif; }
     .btn-rei-acao:disabled { background: #555; color: #888; cursor: not-allowed; border-bottom-color: #333; box-shadow: none; }
@@ -91,7 +85,6 @@
       <div class="sub">PAINEL DE DESPACHO</div>
     </div>
     
-    <!-- NOVO: AVISO DE EXPEDIENTE FECHADO (NORMAL) -->
     <div id="aviso-fechado-normal" class="escondido" style="background: var(--oxblood); color: white; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 20px; font-weight: bold; text-transform: uppercase;">
         🔴 Expediente Fechado
     </div>
@@ -112,13 +105,12 @@
       <div id="area-saida">
         <p style="font-weight: bold; margin-bottom: 10px;">Quantos pedidos está levando agora?</p>
         <input type="number" id="qtd-levar" value="1" min="1" max="10" class="form-input" style="text-align: center; font-size: 2rem; height: 60px; width: 100px; margin: 0 auto 15px;">
-        <!-- ID ADICIONADO PARA BLOQUEIO -->
         <button id="btn-avisar-saida-normal" class="btn" onclick="avisarSaida()">AVISAR SAÍDA</button>
       </div>
 
       <div id="area-rota" class="escondido" style="background: var(--bg); padding: 15px; border: 1px solid var(--oxblood); border-radius: 8px; width: 100%; margin-top: 15px;">
         <p style="color: var(--oxblood); font-weight: bold; margin: 0 0 10px;">🏍️ EM ROTA</p>
-        <p style="margin:0;">Aguardando o restaurante confirmar seu retorno.</p>
+        <p style="margin:0;">Aguardando o restaurante confirmar seu retorno ou cancelar.</p>
       </div>
       
       <button onclick="togglePerfil()" style="background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 10px; border-radius: 6px; margin-top: 30px; width: 100%; cursor: pointer; font-weight: bold;">MEU PERFIL (ESTATÍSTICAS)</button>
@@ -151,7 +143,6 @@
 
       <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
           
-          <!-- NOVO: AVISO DE EXPEDIENTE FECHADO (REI) -->
           <div id="aviso-fechado-rei" class="escondido" style="background: rgba(227, 24, 33, 0.8); color: white; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; border: 1px solid #ff4d4d; width: 100%;">
               🔴 Expediente Fechado
           </div>
@@ -163,7 +154,6 @@
           <div id="area-saida-rei" style="width: 100%;">
               <p style="font-size: 1.1rem; color: #fff; margin-bottom: 15px;">Quantos pedidos está levando agora?</p>
               <input type="number" id="qtd-levar-rei" value="1" min="1" max="10" class="rei-input">
-              <!-- ID ADICIONADO PARA BLOQUEIO -->
               <button id="btn-avisar-saida-rei" class="btn-rei-acao" onclick="avisarSaidaRei()">AVISAR SAÍDA</button>
           </div>
 
@@ -178,7 +168,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs, doc, getDoc, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBsKT8yM2UJ6dSonbab2ETSidi1KLF6GbM",
@@ -198,14 +188,16 @@
     const somCoroacao = new Audio("https://actions.google.com/sounds/v1/fanfares/triumphant_fanfare.ogg");
     somCoroacao.volume = 0.8;
     
-    // VARIAVEIS DE CONTROLE DE EXPEDIENTE
     let expedienteAberto = false;
-    let timestampUltimaAbertura = null; // Guarda o momento (em firebase timestamp) que abriu
+    let timestampUltimaAbertura = null; 
+    let motoboyEstaEmRota = false;
 
     window.entrarComoEntregador = async function() {
-      if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-          Notification.requestPermission();
-      }
+      try {
+          if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+              Notification.requestPermission().catch(e => console.log(e));
+          }
+      } catch(e) {} // Evita erros em navegadores que não suportam notificações
 
       const nome = document.getElementById("login-nome").value.trim().toUpperCase();
       const senha = document.getElementById("login-senha").value.trim();
@@ -225,16 +217,14 @@
             document.getElementById("tela-login").classList.add("escondido");
             document.getElementById("motoboy-nome-display").innerText = nome;
             document.getElementById("rei-nome-display").innerText = nome;
-            
-            // PRIMEIRO OBTEM O STATUS DO EXPEDIENTE ANTES DE INICIAR O RESTO
-            obterStatusExpediente();
+            obterStatusExpediente(); // Agora não vai travar mais!
           } else {
             alert("Nome ou Senha incorretos!");
             btn.innerText = "ACESSAR MINHA COMANDA";
             btn.disabled = false;
           }
       } catch (e) {
-          alert("Erro de conexão.");
+          alert("Erro de conexão com o banco de dados: " + e.message);
           btn.innerText = "ACESSAR MINHA COMANDA";
           btn.disabled = false;
       }
@@ -254,32 +244,41 @@
         }
     }
 
-    // NOVA FUNÇÃO: ESCUTA O STATUS DO EXPEDIENTE PARA BLOQUEIO E RESET
     function obterStatusExpediente() {
         onSnapshot(doc(db, "sistema", "expediente"), async (snapshot) => {
             if(snapshot.exists()) {
                 const status = snapshot.data().status;
-                const btnNormal = document.getElementById("btn-avisar-saida-normal");
-                const btnRei = document.getElementById("btn-avisar-saida-rei");
                 const avisoNormal = document.getElementById("aviso-fechado-normal");
                 const avisoRei = document.getElementById("aviso-fechado-rei");
+                const btnNormal = document.getElementById("btn-avisar-saida-normal");
+                const btnRei = document.getElementById("btn-avisar-saida-rei");
 
                 if(status === "aberto") {
                     expedienteAberto = true;
-                    btnNormal.disabled = false;
-                    btnRei.disabled = false;
                     avisoNormal.classList.add("escondido");
                     avisoRei.classList.add("escondido");
                     
-                    // Busca a QUE HORAS foi aberto para só contar entregas DAÍ PRA FRENTE
-                    const qHist = query(collection(db, "historico_expediente"), where("acao", "==", "abrir"), orderBy("timestamp", "desc"), limit(1));
-                    const ultAberturaSnap = await getDocs(qHist);
-                    if(!ultAberturaSnap.empty) {
-                        timestampUltimaAbertura = ultAberturaSnap.docs[0].data().timestamp;
-                    } else {
-                        timestampUltimaAbertura = null; 
+                    if(!motoboyEstaEmRota) {
+                        btnNormal.disabled = false;
+                        btnRei.disabled = false;
                     }
-                    iniciarEscutaMotoboy(); // Reinicia a escuta com o novo tempo base
+                    
+                    // CORREÇÃO AQUI: Pesquisa sem OrderBy, organizamos no Javascript
+                    const qHist = query(collection(db, "historico_expediente"), where("data", "==", dataHoje));
+                    const ultAberturaSnap = await getDocs(qHist);
+                    
+                    let ultimoTempo = null;
+                    ultAberturaSnap.forEach(d => {
+                        const p = d.data();
+                        if(p.acao === "abrir" && p.timestamp) {
+                            if(!ultimoTempo || p.timestamp.seconds > ultimoTempo.seconds) {
+                                ultimoTempo = p.timestamp;
+                            }
+                        }
+                    });
+                    
+                    timestampUltimaAbertura = ultimoTempo;
+                    iniciarEscutaMotoboy();
                 } else {
                     expedienteAberto = false;
                     btnNormal.disabled = true;
@@ -287,12 +286,10 @@
                     avisoNormal.classList.remove("escondido");
                     avisoRei.classList.remove("escondido");
                     
-                    // SE FECHOU, ZERA A TELA NA HORA
                     document.getElementById("motoboy-qtd").innerText = "0";
                     document.getElementById("motoboy-qtd-rei").innerText = "0";
                     document.getElementById("mensagens-fogo").innerHTML = "";
                     
-                    // Remove Rei se estava ativo e recarrega perfil se estiver aberto
                     document.getElementById("body-main").classList.remove("soberano-body");
                     document.getElementById("tela-motoboy-rei").classList.add("escondido");
                     document.getElementById("tela-motoboy-normal").classList.remove("escondido");
@@ -323,21 +320,14 @@
           }
       });
 
-      // Se já existia uma escuta de entregas rodando, cancela ela antes de criar outra
       if(unsubscribeEntregas) unsubscribeEntregas();
-
-      // MUDANÇA AQUI: Só busca as entregas de HOJE que aconteceram DEPOIS do último "Abrir Expediente"
       let restricoesBusca = [where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje)];
-      
-      // Se tivermos a hora que o expediente abriu, só trazemos o que foi entregue DEPOIS
       if (timestampUltimaAbertura) {
           restricoesBusca.push(where("timestamp", ">=", timestampUltimaAbertura));
       }
       
       const qEntregas = query(collection(db, "entregas"), ...restricoesBusca);
-      
       unsubscribeEntregas = onSnapshot(qEntregas, (snapshot) => {
-        // Se o expediente estiver fechado, força a leitura a ser zero e ignora o firebase
         if(!expedienteAberto) return;
 
         const qtd = snapshot.size;
@@ -360,16 +350,31 @@
 
       const qPendentes = query(collection(db, "pendentes"), where("motoboy", "==", usuarioAtual));
       onSnapshot(qPendentes, (snapshot) => {
+        const btnNormal = document.getElementById("btn-avisar-saida-normal");
+        const btnRei = document.getElementById("btn-avisar-saida-rei");
+
         if(snapshot.empty) {
+          motoboyEstaEmRota = false;
           document.getElementById("area-saida").classList.remove("escondido");
           document.getElementById("area-rota").classList.add("escondido");
           document.getElementById("area-saida-rei").classList.remove("escondido");
           document.getElementById("area-rota-rei").classList.add("escondido");
+          
+          if(expedienteAberto) {
+              btnNormal.disabled = false;
+              btnNormal.innerText = "AVISAR SAÍDA";
+              btnRei.disabled = false;
+              btnRei.innerText = "AVISAR SAÍDA";
+          }
         } else {
+          motoboyEstaEmRota = true;
           document.getElementById("area-saida").classList.add("escondido");
           document.getElementById("area-rota").classList.remove("escondido");
           document.getElementById("area-saida-rei").classList.add("escondido");
           document.getElementById("area-rota-rei").classList.remove("escondido");
+          
+          btnNormal.disabled = true;
+          btnRei.disabled = true;
         }
       });
     }
@@ -409,25 +414,35 @@
         setTimeout(digitar, 400);
     }
 
-    window.avisarSaida = async function() { registrarSaida(document.getElementById("qtd-levar").value); };
-    window.avisarSaidaRei = async function() { registrarSaida(document.getElementById("qtd-levar-rei").value); };
+    window.avisarSaida = async function() { registrarSaida(document.getElementById("qtd-levar").value, "btn-avisar-saida-normal"); };
+    window.avisarSaidaRei = async function() { registrarSaida(document.getElementById("qtd-levar-rei").value, "btn-avisar-saida-rei"); };
 
-    async function registrarSaida(valorStr) {
+    async function registrarSaida(valorStr, btnId) {
       if(!expedienteAberto) return alert("O expediente está fechado. Você não pode registrar saídas agora.");
+      if(motoboyEstaEmRota) return alert("Você já avisou a saída! Aguarde o restaurante confirmar ou cancelar.");
       
       const qtd = parseInt(valorStr);
       if(qtd > 10) { alert("O limite máximo permitido são 10 pedidos por vez!"); return; }
       if(qtd < 1) { alert("Quantidade inválida!"); return; }
 
-      await addDoc(collection(db, "pendentes"), {
-        motoboy: usuarioAtual,
-        qtd: qtd,
-        hora: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
-      });
+      const btn = document.getElementById(btnId);
+      btn.disabled = true;
+      btn.innerText = "ENVIANDO...";
+
+      try {
+          await addDoc(collection(db, "pendentes"), {
+            motoboy: usuarioAtual,
+            qtd: qtd,
+            hora: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
+          });
+      } catch(e) {
+          alert("Erro ao enviar! Tente novamente.");
+          btn.disabled = false;
+          btn.innerText = "AVISAR SAÍDA";
+      }
     }
 
     async function calcularEstatisticas() {
-      // O Perfil mostra o Total do DIA (tudo que fez no dia, independente do turno) e Mês. Isso não altera.
       const qTotal = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual));
       const snapshot = await getDocs(qTotal);
       let contMes = 0; let contHoje = 0;
