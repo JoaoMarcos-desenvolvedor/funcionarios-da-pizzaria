@@ -25,8 +25,8 @@
     .form-input { width: 100%; padding: 14px; border-radius: 6px; border: 1px solid var(--line); background: var(--bg); color: var(--cream); font-size: 1rem; margin-bottom: 15px; }
     .btn { background: var(--gold); color: var(--bg); border: none; padding: 14px; border-radius: 6px; font-weight: 900; width: 100%; cursor: pointer; text-transform: uppercase; font-size: 1.1rem; transition: 0.2s;}
     
-    .btn-rm { background: transparent; color: var(--oxblood); border: 1px solid var(--oxblood); padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-    .btn-ok { background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .btn-rm { background: transparent; color: var(--oxblood); border: 1px solid var(--oxblood); padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
+    .btn-ok { background: var(--green); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; text-transform: uppercase; }
     
     .row { background: var(--surface); border-radius: 8px; padding: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: space-between; border: 1px solid var(--line); flex-wrap: wrap; gap: 10px; }
     .contagem { font-weight: 900; font-size: 1.3rem; color: var(--bg); background: var(--gold); border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; margin-right: 10px; }
@@ -118,7 +118,6 @@
       if(document.getElementById("login-senha").value === "1234") {
         document.getElementById("tela-login").classList.add("escondido");
         document.getElementById("tela-admin").classList.remove("escondido");
-        // Dá um pequeno "play" fantasma para o navegador autorizar o som no futuro
         somCampainha.play().then(() => { somCampainha.pause(); somCampainha.currentTime = 0; }).catch(e => {});
         iniciarEscutaAdmin();
       } else {
@@ -127,7 +126,6 @@
     };
 
     function iniciarEscutaAdmin() {
-      // 1. Escuta o Status do Expediente
       onSnapshot(doc(db, "sistema", "expediente"), (snapshot) => {
         const btn = document.getElementById("btn-expediente");
         const texto = document.getElementById("status-expediente-texto");
@@ -154,7 +152,6 @@
         }
       });
 
-      // 2. Escuta o Histórico do Expediente de Hoje
       const qHist = query(collection(db, "historico_expediente"), where("data", "==", dataHoje), orderBy("hora", "desc"));
       onSnapshot(qHist, (snapshot) => {
          const div = document.getElementById("historico-expediente");
@@ -174,7 +171,6 @@
          });
       });
 
-      // 3. Escuta os motoboys Cadastrados
       onSnapshot(collection(db, "motoboys"), (snapshot) => {
           const div = document.getElementById("lista-motoboys");
           div.innerHTML = "";
@@ -188,14 +184,13 @@
           });
       });
 
-      // 4. Escuta Pendentes E TOCA A CAMPAINHA
+      // ESCUTA PENDENTES (AQUI ESTÁ A MUDANÇA DOS BOTÕES)
       onSnapshot(collection(db, "pendentes"), (snapshot) => {
-        // Toca a campainha apenas se for um pedido NOVO (não a primeira vez que abriu o painel)
         if (!primeiraCargaPendentes) {
             snapshot.docChanges().forEach((change) => {
                 if (change.type === "added") {
-                    somCampainha.currentTime = 0; // Zera o áudio
-                    somCampainha.play().catch(e => console.log("Áudio bloqueado pelo navegador", e));
+                    somCampainha.currentTime = 0; 
+                    somCampainha.play().catch(e => console.log("Áudio bloqueado", e));
                 }
             });
         }
@@ -207,14 +202,16 @@
         snapshot.forEach((d) => {
           const p = d.data();
           div.innerHTML += `
-            <div class="row" style="border-color: var(--oxblood);">
-              <div><b>${p.motoboy}</b> levou ${p.qtd} pedido(s) às ${p.hora}</div>
-              <button class="btn-ok" onclick="confirmarChegada('${d.id}', '${p.motoboy}', ${p.qtd})">CONFIRMAR RETORNO</button>
+            <div class="row" style="border-color: var(--oxblood); flex-direction: column; align-items: flex-start;">
+              <div style="margin-bottom: 15px; font-size: 1.1rem;"><b>${p.motoboy}</b> levou <b style="color: var(--gold); font-size: 1.3rem;">${p.qtd}</b> pedido(s) às ${p.hora}</div>
+              <div style="display: flex; gap: 10px; width: 100%;">
+                <button class="btn-rm" style="flex: 1; padding: 12px; font-size: 0.95rem;" onclick="cancelarSaida('${d.id}')">CANCELAR</button>
+                <button class="btn-ok" style="flex: 1; padding: 12px; font-size: 0.95rem;" onclick="confirmarChegada('${d.id}', '${p.motoboy}', ${p.qtd})">CONFIRMAR</button>
+              </div>
             </div>`;
         });
       });
 
-      // 5. Escuta Entregas Concluídas Hoje
       const qHoje = query(collection(db, "entregas"), where("data", "==", dataHoje));
       onSnapshot(qHoje, (snapshot) => {
         const contagem = {};
@@ -241,7 +238,6 @@
       });
     }
 
-    // Ação: Criar Motoboy
     window.cadastrarMotoboy = async function() {
       const nome = document.getElementById("novo-moto-nome").value.trim().toUpperCase();
       const senha = document.getElementById("novo-moto-senha").value.trim();
@@ -254,7 +250,6 @@
       alert("Acesso criado com sucesso!");
     };
 
-    // Ação: Remover Motoboy
     window.removerMotoboyDb = async function(nome) {
         if(confirm(`Tem certeza que deseja bloquear o acesso de ${nome}? Ele não poderá mais usar a comanda.`)) {
             await deleteDoc(doc(db, "motoboys", nome));
@@ -281,6 +276,15 @@
       await deleteDoc(doc(db, "pendentes", docId));
       for(let i=0; i<qtd; i++){
         await addDoc(collection(db, "entregas"), { motoboy: motoboy, data: dataHoje, timestamp: serverTimestamp() });
+      }
+    };
+
+    // NOVA FUNÇÃO: CANCELAR SAÍDA
+    window.cancelarSaida = async function(docId) {
+      const confirmacao = confirm("Atenção: Tem certeza que deseja CANCELAR essa saída? (O motoboy terá que enviar a quantidade novamente)");
+      if(confirmacao) {
+        // Apenas deleta o documento sem registrar entregas
+        await deleteDoc(doc(db, "pendentes", docId));
       }
     };
 
