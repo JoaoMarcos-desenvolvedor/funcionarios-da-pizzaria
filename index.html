@@ -29,12 +29,51 @@
     .perfil-box { background: #1a1a1a; border: 1px solid var(--gold); border-radius: 8px; padding: 20px; margin-top: 20px; text-align: left; }
     .perfil-stat { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 1.1rem; border-bottom: 1px dashed var(--line); padding-bottom: 5px; }
 
+    /* ANIMAÇÃO DO CUPOM DOURADO */
+    .cupom-dourado-wrapper {
+        position: relative;
+        padding: 15px;
+        border-radius: 8px;
+        background: linear-gradient(45deg, #d4af37, #fff2a8, #8a6112, #d4af37);
+        background-size: 300% 300%;
+        animation: reluzente 3s ease infinite;
+        text-align: center;
+        box-shadow: 0 5px 20px rgba(212, 175, 55, 0.4);
+        margin-bottom: 25px;
+        color: #310d1c;
+        border: 2px solid #fff;
+        overflow: hidden;
+        width: 100%;
+    }
+    .cupom-dourado-wrapper::after {
+        content: '';
+        position: absolute;
+        top: 0; left: -150%; width: 50%; height: 100%;
+        background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 50%, rgba(255,255,255,0) 100%);
+        transform: skewX(-25deg);
+        animation: brilhoFeixe 4s infinite;
+        pointer-events: none;
+    }
+    @keyframes reluzente {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes brilhoFeixe {
+        0% { left: -150%; }
+        20% { left: 150%; }
+        100% { left: 150%; }
+    }
+    .cupom-titulo { font-size: 1.2rem; font-weight: 900; margin: 0 0 5px 0; letter-spacing: 1px; }
+    .cupom-texto { font-size: 0.9rem; font-weight: bold; margin: 0; opacity: 0.9; }
+
     @keyframes firePulse { 0% { transform: scale(1); color: var(--gold); text-shadow: 0 0 5px var(--gold); } 50% { transform: scale(1.03); color: var(--oxblood); text-shadow: 0 0 10px var(--oxblood); } 100% { transform: scale(1); color: var(--gold); text-shadow: 0 0 5px var(--gold); } }
     .animacao-fogo { font-size: clamp(0.75rem, 3.8vw, 1.2rem); font-weight: 900; text-transform: uppercase; animation: firePulse 1.5s infinite; text-align: center; width: 100%; white-space: nowrap; }
 
     @keyframes firePulseForte { 0% { transform: scale(1); color: var(--oxblood); text-shadow: 0 0 8px var(--oxblood); } 50% { transform: scale(1.04); color: var(--gold); text-shadow: 0 0 15px var(--gold); } 100% { transform: scale(1); color: var(--oxblood); text-shadow: 0 0 8px var(--oxblood); } }
     .animacao-fogo-forte { font-size: clamp(0.6rem, 2.7vw, 1rem); font-weight: 900; text-transform: uppercase; animation: firePulseForte 0.8s infinite; text-align: center; width: 100%; white-space: nowrap; }
 
+    /* MODO SOBERANO */
     .soberano-body { background-color: #310d1c !important; font-family: 'Georgia', serif !important; }
     .rei-frame-1 { position: fixed; top: 6px; left: 6px; right: 6px; bottom: 6px; border: 1px solid #d4af37; pointer-events: none; z-index: 100; box-sizing: border-box; }
     .rei-frame-2 { position: fixed; top: 12px; left: 12px; right: 12px; bottom: 12px; border: 1px solid rgba(212, 175, 55, 0.3); pointer-events: none; z-index: 100; box-sizing: border-box; }
@@ -82,7 +121,15 @@
       <div class="sub">PAINEL DE DESPACHO</div>
     </div>
     
-    <div class="row" style="flex-direction: column; text-align: center; padding: 30px 20px; border:none; background:transparent;">
+    <div class="row" style="flex-direction: column; text-align: center; padding: 20px; border:none; background:transparent;">
+      
+      <!-- ESPAÇO DO CUPOM DOURADO -->
+      <div id="area-cupom" class="cupom-dourado-wrapper escondido">
+          <p class="cupom-titulo">🏆 ENTREGADOR DA SEMANA 🏆</p>
+          <p class="cupom-texto">Você recebeu o Cupom Dourado!</p>
+          <p style="font-size: 0.75rem; margin-top: 5px; opacity: 0.8;">Válido até: <span id="cupom-validade-txt"></span></p>
+      </div>
+
       <div style="font-size: 0.85rem; opacity: 0.8; margin-bottom: 15px;">ENTREGAS APROVADAS HOJE</div>
       <div class="contagem" id="motoboy-qtd" style="width: 85px; height: 85px; font-size: 2.5rem; margin: 0 auto 25px;">0</div>
       
@@ -90,7 +137,6 @@
       
       <div id="area-saida">
         <p style="font-weight: bold; margin-bottom: 10px;">Quantos pedidos está levando agora?</p>
-        <!-- MAX ALTERADO PARA 10 AQUI -->
         <input type="number" id="qtd-levar" value="1" min="1" max="10" class="form-input" style="text-align: center; font-size: 2rem; height: 60px; width: 100px; margin: 0 auto 15px;">
         <button class="btn" onclick="avisarSaida()">AVISAR SAÍDA</button>
       </div>
@@ -135,7 +181,6 @@
 
           <div id="area-saida-rei" style="width: 100%;">
               <p style="font-size: 1.1rem; color: #fff; margin-bottom: 15px;">Quantos pedidos está levando agora?</p>
-              <!-- MAX ALTERADO PARA 10 AQUI -->
               <input type="number" id="qtd-levar-rei" value="1" min="1" max="10" class="rei-input">
               <button class="btn-rei-acao" onclick="avisarSaidaRei()">AVISAR SAÍDA</button>
           </div>
@@ -215,6 +260,22 @@
     };
 
     function iniciarEscutaMotoboy() {
+      // NOVA ESCUTA: Verifica se ele tem o cupom dourado
+      onSnapshot(doc(db, "motoboys", usuarioAtual), (docSnap) => {
+          if(docSnap.exists()) {
+              const dados = docSnap.data();
+              const divCupom = document.getElementById("area-cupom");
+              if(dados.cupomValidade && dados.cupomValidade >= dataHoje) {
+                  divCupom.classList.remove("escondido");
+                  // Converte YYYY-MM-DD para DD/MM/YYYY
+                  const p = dados.cupomValidade.split('-');
+                  document.getElementById("cupom-validade-txt").innerText = `${p[2]}/${p[1]}/${p[0]}`;
+              } else {
+                  divCupom.classList.add("escondido");
+              }
+          }
+      });
+
       const qEntregas = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje));
       onSnapshot(qEntregas, (snapshot) => {
         const qtd = snapshot.size;
@@ -302,16 +363,8 @@
 
     async function registrarSaida(valorStr) {
       const qtd = parseInt(valorStr);
-      
-      // TRAVA DE SEGURANÇA ADICIONADA AQUI
-      if(qtd > 10) {
-          alert("O limite máximo permitido são 10 pedidos por vez!");
-          return;
-      }
-      if(qtd < 1) {
-          alert("Quantidade inválida!");
-          return;
-      }
+      if(qtd > 10) { alert("O limite máximo permitido são 10 pedidos por vez!"); return; }
+      if(qtd < 1) { alert("Quantidade inválida!"); return; }
 
       await addDoc(collection(db, "pendentes"), {
         motoboy: usuarioAtual,
