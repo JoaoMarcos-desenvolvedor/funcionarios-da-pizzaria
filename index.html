@@ -91,6 +91,7 @@
       <div class="sub">PAINEL DE DESPACHO</div>
     </div>
     
+    <!-- NOVO: AVISO DE EXPEDIENTE FECHADO (NORMAL) -->
     <div id="aviso-fechado-normal" class="escondido" style="background: var(--oxblood); color: white; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 20px; font-weight: bold; text-transform: uppercase;">
         🔴 Expediente Fechado
     </div>
@@ -111,12 +112,13 @@
       <div id="area-saida">
         <p style="font-weight: bold; margin-bottom: 10px;">Quantos pedidos está levando agora?</p>
         <input type="number" id="qtd-levar" value="1" min="1" max="10" class="form-input" style="text-align: center; font-size: 2rem; height: 60px; width: 100px; margin: 0 auto 15px;">
+        <!-- ID ADICIONADO PARA BLOQUEIO -->
         <button id="btn-avisar-saida-normal" class="btn" onclick="avisarSaida()">AVISAR SAÍDA</button>
       </div>
 
       <div id="area-rota" class="escondido" style="background: var(--bg); padding: 15px; border: 1px solid var(--oxblood); border-radius: 8px; width: 100%; margin-top: 15px;">
         <p style="color: var(--oxblood); font-weight: bold; margin: 0 0 10px;">🏍️ EM ROTA</p>
-        <p style="margin:0;">Aguardando o restaurante confirmar seu retorno ou cancelar.</p>
+        <p style="margin:0;">Aguardando o restaurante confirmar seu retorno.</p>
       </div>
       
       <button onclick="togglePerfil()" style="background: transparent; color: var(--gold); border: 1px solid var(--gold); padding: 10px; border-radius: 6px; margin-top: 30px; width: 100%; cursor: pointer; font-weight: bold;">MEU PERFIL (ESTATÍSTICAS)</button>
@@ -149,6 +151,7 @@
 
       <div style="text-align: center; display: flex; flex-direction: column; align-items: center;">
           
+          <!-- NOVO: AVISO DE EXPEDIENTE FECHADO (REI) -->
           <div id="aviso-fechado-rei" class="escondido" style="background: rgba(227, 24, 33, 0.8); color: white; padding: 10px; border-radius: 6px; text-align: center; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; border: 1px solid #ff4d4d; width: 100%;">
               🔴 Expediente Fechado
           </div>
@@ -160,6 +163,7 @@
           <div id="area-saida-rei" style="width: 100%;">
               <p style="font-size: 1.1rem; color: #fff; margin-bottom: 15px;">Quantos pedidos está levando agora?</p>
               <input type="number" id="qtd-levar-rei" value="1" min="1" max="10" class="rei-input">
+              <!-- ID ADICIONADO PARA BLOQUEIO -->
               <button id="btn-avisar-saida-rei" class="btn-rei-acao" onclick="avisarSaidaRei()">AVISAR SAÍDA</button>
           </div>
 
@@ -194,9 +198,9 @@
     const somCoroacao = new Audio("https://actions.google.com/sounds/v1/fanfares/triumphant_fanfare.ogg");
     somCoroacao.volume = 0.8;
     
+    // VARIAVEIS DE CONTROLE DE EXPEDIENTE
     let expedienteAberto = false;
-    let timestampUltimaAbertura = null; 
-    let motoboyEstaEmRota = false; // Controle para bloqueio de duplo clique
+    let timestampUltimaAbertura = null; // Guarda o momento (em firebase timestamp) que abriu
 
     window.entrarComoEntregador = async function() {
       if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
@@ -221,6 +225,8 @@
             document.getElementById("tela-login").classList.add("escondido");
             document.getElementById("motoboy-nome-display").innerText = nome;
             document.getElementById("rei-nome-display").innerText = nome;
+            
+            // PRIMEIRO OBTEM O STATUS DO EXPEDIENTE ANTES DE INICIAR O RESTO
             obterStatusExpediente();
           } else {
             alert("Nome ou Senha incorretos!");
@@ -248,26 +254,24 @@
         }
     }
 
+    // NOVA FUNÇÃO: ESCUTA O STATUS DO EXPEDIENTE PARA BLOQUEIO E RESET
     function obterStatusExpediente() {
         onSnapshot(doc(db, "sistema", "expediente"), async (snapshot) => {
             if(snapshot.exists()) {
                 const status = snapshot.data().status;
-                const avisoNormal = document.getElementById("aviso-fechado-normal");
-                const avisoRei = document.getElementById("aviso-fechado-rei");
                 const btnNormal = document.getElementById("btn-avisar-saida-normal");
                 const btnRei = document.getElementById("btn-avisar-saida-rei");
+                const avisoNormal = document.getElementById("aviso-fechado-normal");
+                const avisoRei = document.getElementById("aviso-fechado-rei");
 
                 if(status === "aberto") {
                     expedienteAberto = true;
+                    btnNormal.disabled = false;
+                    btnRei.disabled = false;
                     avisoNormal.classList.add("escondido");
                     avisoRei.classList.add("escondido");
                     
-                    // Só habilita o botão se não estiver em rota
-                    if(!motoboyEstaEmRota) {
-                        btnNormal.disabled = false;
-                        btnRei.disabled = false;
-                    }
-                    
+                    // Busca a QUE HORAS foi aberto para só contar entregas DAÍ PRA FRENTE
                     const qHist = query(collection(db, "historico_expediente"), where("acao", "==", "abrir"), orderBy("timestamp", "desc"), limit(1));
                     const ultAberturaSnap = await getDocs(qHist);
                     if(!ultAberturaSnap.empty) {
@@ -275,7 +279,7 @@
                     } else {
                         timestampUltimaAbertura = null; 
                     }
-                    iniciarEscutaMotoboy();
+                    iniciarEscutaMotoboy(); // Reinicia a escuta com o novo tempo base
                 } else {
                     expedienteAberto = false;
                     btnNormal.disabled = true;
@@ -283,10 +287,12 @@
                     avisoNormal.classList.remove("escondido");
                     avisoRei.classList.remove("escondido");
                     
+                    // SE FECHOU, ZERA A TELA NA HORA
                     document.getElementById("motoboy-qtd").innerText = "0";
                     document.getElementById("motoboy-qtd-rei").innerText = "0";
                     document.getElementById("mensagens-fogo").innerHTML = "";
                     
+                    // Remove Rei se estava ativo e recarrega perfil se estiver aberto
                     document.getElementById("body-main").classList.remove("soberano-body");
                     document.getElementById("tela-motoboy-rei").classList.add("escondido");
                     document.getElementById("tela-motoboy-normal").classList.remove("escondido");
@@ -317,14 +323,21 @@
           }
       });
 
+      // Se já existia uma escuta de entregas rodando, cancela ela antes de criar outra
       if(unsubscribeEntregas) unsubscribeEntregas();
+
+      // MUDANÇA AQUI: Só busca as entregas de HOJE que aconteceram DEPOIS do último "Abrir Expediente"
       let restricoesBusca = [where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje)];
+      
+      // Se tivermos a hora que o expediente abriu, só trazemos o que foi entregue DEPOIS
       if (timestampUltimaAbertura) {
           restricoesBusca.push(where("timestamp", ">=", timestampUltimaAbertura));
       }
       
       const qEntregas = query(collection(db, "entregas"), ...restricoesBusca);
+      
       unsubscribeEntregas = onSnapshot(qEntregas, (snapshot) => {
+        // Se o expediente estiver fechado, força a leitura a ser zero e ignora o firebase
         if(!expedienteAberto) return;
 
         const qtd = snapshot.size;
@@ -347,34 +360,16 @@
 
       const qPendentes = query(collection(db, "pendentes"), where("motoboy", "==", usuarioAtual));
       onSnapshot(qPendentes, (snapshot) => {
-        const btnNormal = document.getElementById("btn-avisar-saida-normal");
-        const btnRei = document.getElementById("btn-avisar-saida-rei");
-
         if(snapshot.empty) {
-          motoboyEstaEmRota = false;
-          // RESTAURA TELA E BOTOES
           document.getElementById("area-saida").classList.remove("escondido");
           document.getElementById("area-rota").classList.add("escondido");
           document.getElementById("area-saida-rei").classList.remove("escondido");
           document.getElementById("area-rota-rei").classList.add("escondido");
-          
-          if(expedienteAberto) {
-              btnNormal.disabled = false;
-              btnNormal.innerText = "AVISAR SAÍDA";
-              btnRei.disabled = false;
-              btnRei.innerText = "AVISAR SAÍDA";
-          }
         } else {
-          motoboyEstaEmRota = true;
-          // BLOQUEIA TELA
           document.getElementById("area-saida").classList.add("escondido");
           document.getElementById("area-rota").classList.remove("escondido");
           document.getElementById("area-saida-rei").classList.add("escondido");
           document.getElementById("area-rota-rei").classList.remove("escondido");
-          
-          // Bloqueia botoes caso deem um jeito de mostrar a tela
-          btnNormal.disabled = true;
-          btnRei.disabled = true;
         }
       });
     }
@@ -414,35 +409,25 @@
         setTimeout(digitar, 400);
     }
 
-    window.avisarSaida = async function() { registrarSaida(document.getElementById("qtd-levar").value, "btn-avisar-saida-normal"); };
-    window.avisarSaidaRei = async function() { registrarSaida(document.getElementById("qtd-levar-rei").value, "btn-avisar-saida-rei"); };
+    window.avisarSaida = async function() { registrarSaida(document.getElementById("qtd-levar").value); };
+    window.avisarSaidaRei = async function() { registrarSaida(document.getElementById("qtd-levar-rei").value); };
 
-    async function registrarSaida(valorStr, btnId) {
+    async function registrarSaida(valorStr) {
       if(!expedienteAberto) return alert("O expediente está fechado. Você não pode registrar saídas agora.");
-      if(motoboyEstaEmRota) return alert("Você já avisou a saída! Aguarde o restaurante confirmar ou cancelar.");
       
       const qtd = parseInt(valorStr);
       if(qtd > 10) { alert("O limite máximo permitido são 10 pedidos por vez!"); return; }
       if(qtd < 1) { alert("Quantidade inválida!"); return; }
 
-      const btn = document.getElementById(btnId);
-      btn.disabled = true;
-      btn.innerText = "ENVIANDO...";
-
-      try {
-          await addDoc(collection(db, "pendentes"), {
-            motoboy: usuarioAtual,
-            qtd: qtd,
-            hora: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
-          });
-      } catch(e) {
-          alert("Erro ao enviar! Tente novamente.");
-          btn.disabled = false;
-          btn.innerText = "AVISAR SAÍDA";
-      }
+      await addDoc(collection(db, "pendentes"), {
+        motoboy: usuarioAtual,
+        qtd: qtd,
+        hora: new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})
+      });
     }
 
     async function calcularEstatisticas() {
+      // O Perfil mostra o Total do DIA (tudo que fez no dia, independente do turno) e Mês. Isso não altera.
       const qTotal = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual));
       const snapshot = await getDocs(qTotal);
       let contMes = 0; let contHoje = 0;
