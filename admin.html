@@ -176,11 +176,13 @@
               let botaoCupom = hasCupom 
                 ? `<button class="btn-rm" style="padding: 4px 10px; font-size: 0.8rem; color: #310d1c; background: #fcc010; border-color: #fcc010;" onclick="removerCupom('${d.id}')">🏆 ATIVO (TIRAR)</button>` 
                 : `<button class="btn-ok" style="padding: 4px 10px; font-size: 0.8rem; background: transparent; color: var(--gold); border: 1px solid var(--gold);" onclick="darCupom('${d.id}')">🏆 DAR CUPOM</button>`;
+              
+              // MUDANÇA: Texto do botão alterado para EXCLUIR ACESSO
               div.innerHTML += `
               <div class="row" style="padding: 10px 16px; flex-direction: column; align-items: stretch; gap: 8px;">
                   <div style="display: flex; justify-content: space-between; align-items: center;">
                       <div><b>${d.id}</b> <span style="font-size: 0.85rem; color: var(--gold); margin-left: 10px;">(Senha: ${p.senha})</span></div>
-                      <button class="btn-rm" style="padding: 4px 10px;" onclick="removerMotoboyDb('${d.id}')">X</button>
+                      <button class="btn-rm" style="padding: 4px 10px;" onclick="removerMotoboyDb('${d.id}')">EXCLUIR ACESSO</button>
                   </div>
                   <div style="display: flex; justify-content: flex-start;">${botaoCupom}</div>
               </div>`;
@@ -213,7 +215,6 @@
         });
       });
 
-      // O Admin sempre vê TUDO do dia
       const qHoje = query(collection(db, "entregas"), where("data", "==", dataHoje));
       onSnapshot(qHoje, (snapshot) => {
         const contagem = {};
@@ -266,7 +267,7 @@
     };
 
     window.removerMotoboyDb = async function(nome) {
-        if(confirm(`Tem certeza que deseja bloquear o acesso de ${nome}?`)) {
+        if(confirm(`Tem certeza que deseja EXCLUIR O ACESSO de ${nome}?\nEle não conseguirá mais logar na comanda.`)) {
             await deleteDoc(doc(db, "motoboys", nome));
         }
     };
@@ -282,7 +283,7 @@
           acao: novoStatus === "aberto" ? "abrir" : "fechar",
           data: dataHoje,
           hora: horaAtual,
-          timestamp: serverTimestamp() // Importante para o motoboy conseguir pesquisar!
+          timestamp: serverTimestamp() 
         });
       }
     };
