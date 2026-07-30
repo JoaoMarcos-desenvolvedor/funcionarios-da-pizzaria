@@ -89,7 +89,7 @@
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, serverTimestamp, getDocs, limit, setDoc, orderBy } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, where, deleteDoc, doc, serverTimestamp, getDocs, limit, setDoc } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBsKT8yM2UJ6dSonbab2ETSidi1KLF6GbM",
@@ -147,15 +147,25 @@
         }
       });
 
-      const qHist = query(collection(db, "historico_expediente"), where("data", "==", dataHoje), orderBy("timestamp", "desc"));
+      const qHist = query(collection(db, "historico_expediente"), where("data", "==", dataHoje));
       onSnapshot(qHist, (snapshot) => {
          const div = document.getElementById("historico-expediente");
          div.innerHTML = "";
          if(snapshot.empty) {
            div.innerHTML = "<span style='opacity: 0.5;'>Nenhum registro hoje.</span>";
+           return;
          }
-         snapshot.forEach(d => {
-           const p = d.data();
+
+         let historicoArray = [];
+         snapshot.forEach(d => historicoArray.push(d.data()));
+         
+         // Organiza a lista localmente para não dar timeout no Firebase
+         historicoArray.sort((a, b) => {
+            if(!a.timestamp || !b.timestamp) return 0;
+            return b.timestamp.seconds - a.timestamp.seconds;
+         });
+
+         historicoArray.forEach(p => {
            const acaoEstilo = p.acao === "abrir" ? "color: var(--green);" : "color: var(--oxblood);";
            const acaoTexto = p.acao === "abrir" ? "Aberto" : "Fechado";
            div.innerHTML += `
@@ -177,7 +187,6 @@
                 ? `<button class="btn-rm" style="padding: 4px 10px; font-size: 0.8rem; color: #310d1c; background: #fcc010; border-color: #fcc010;" onclick="removerCupom('${d.id}')">🏆 ATIVO (TIRAR)</button>` 
                 : `<button class="btn-ok" style="padding: 4px 10px; font-size: 0.8rem; background: transparent; color: var(--gold); border: 1px solid var(--gold);" onclick="darCupom('${d.id}')">🏆 DAR CUPOM</button>`;
               
-              // MUDANÇA: Texto do botão alterado para EXCLUIR ACESSO
               div.innerHTML += `
               <div class="row" style="padding: 10px 16px; flex-direction: column; align-items: stretch; gap: 8px;">
                   <div style="display: flex; justify-content: space-between; align-items: center;">
@@ -245,7 +254,7 @@
         const dataVencimento = new Date();
         dataVencimento.setDate(dataVencimento.getDate() + 7);
         const dataStr = dataVencimento.toISOString().split('T')[0];
-        if(confirm(`Deseja premiar ${nome} com o Cupom Dourado de Melhor da Semana?\nEle será válido até ${dataStr.split('-').reverse().join('/')}.`)) {
+        if(confirm(`Deseja premiar ${nome} com o Cupom Dourado?\nEle será válido até ${dataStr.split('-').reverse().join('/')}.`)) {
             await setDoc(doc(db, "motoboys", nome), { cupomValidade: dataStr }, { merge: true });
         }
     };
