@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -193,15 +194,18 @@
     const somCoroacao = new Audio("https://actions.google.com/sounds/v1/fanfares/triumphant_fanfare.ogg");
     somCoroacao.volume = 0.8;
     
-    // Controles de Estado
     let expedienteAberto = false;
     let timestampUltimaAbertura = null; 
     let motoboyEstaEmRota = false;
     let unsubscribeEntregas = null;
 
-    // --- FUNÇÃO 1: LOGIN (ESTABILIZADA) ---
+    // --- 1: FUNÇÃO DE LOGIN ---
     window.entrarComoEntregador = async function() {
-      try { if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") { Notification.requestPermission(); } } catch(e) {}
+      try {
+          if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+              Notification.requestPermission().catch(e => console.log(e));
+          }
+      } catch(e) {} 
 
       const nome = document.getElementById("login-nome").value.trim().toUpperCase();
       const senha = document.getElementById("login-senha").value.trim();
@@ -240,8 +244,7 @@
 
     window.sair = function() { location.reload(); };
 
-    // --- ESCUTAS INDEPENDENTES (EVITA LENTIDÃO E BLOQUEIOS DE SEGURANÇA) ---
-    
+    // --- 2: ESCUTAS SECUNDÁRIAS ---
     function iniciarEscutaCupom() {
         let controleCupomAnterior = null;
         onSnapshot(doc(db, "motoboys", usuarioAtual), (docSnap) => {
@@ -302,6 +305,7 @@
         });
     }
 
+    // --- 3: O CORAÇÃO DO SISTEMA (EXPEDIENTE E ENTREGAS) ---
     function obterStatusExpediente() {
         onSnapshot(doc(db, "sistema", "expediente"), async (snapshot) => {
             const status = snapshot.exists() ? snapshot.data().status : "fechado";
@@ -357,32 +361,28 @@
         });
     }
 
-    // CORREÇÃO: A FILTRAGEM DO TURNO É FEITA NO JAVASCRIPT LOCAL PARA NÃO TRAVAR O BANCO
     function iniciarEscutaEntregasTurno() {
       if(unsubscribeEntregas) unsubscribeEntregas();
       
-      // Busca apenas por motoboy e data, para não travar o banco de dados
-      const qEntregas = query(
-          collection(db, "entregas"), 
-          where("motoboy", "==", usuarioAtual), 
-          where("data", "==", dataHoje)
-      );
+      // SOLUÇÃO DO BUG: Removemos o filtro de timestamp daqui de cima e passamos para o Javascript local
+      const qEntregas = query(collection(db, "entregas"), where("motoboy", "==", usuarioAtual), where("data", "==", dataHoje));
       
       unsubscribeEntregas = onSnapshot(qEntregas, (snapshot) => {
         if(!expedienteAberto) return;
 
         let qtd = 0;
-
-        // A filtragem do turno acontece aqui no Javascript agora
-        snapshot.forEach((d) => {
-            const entrega = d.data();
-            if (!timestampUltimaAbertura) {
-                qtd++;
-            } else {
-                // Conta apenas as entregas que tem horário maior ou igual à última abertura
-                if (!entrega.timestamp || entrega.timestamp.seconds >= timestampUltimaAbertura.seconds) {
+        
+        // O Javascript do celular é que faz a matemática agora
+        snapshot.forEach((doc) => {
+            const d = doc.data();
+            if (timestampUltimaAbertura) {
+                // Se a entrega não tem timestamp ainda (foi feita agora) OU se a hora é maior que a hora de abertura
+                if (!d.timestamp || d.timestamp.seconds >= timestampUltimaAbertura.seconds) {
                     qtd++;
                 }
+            } else {
+                // Se não sabemos a hora que abriu, considera todas de hoje
+                qtd++;
             }
         });
 
@@ -404,7 +404,7 @@
       });
     }
 
-    // --- FUNÇÃO 2: ENVIAR PEDIDO (COM TRATAMENTO DE ERRO FORTE) ---
+    // --- 4: LÓGICA DE AVISAR SAÍDA ---
     window.avisarSaida = async function() { registrarSaida("qtd-levar", "btn-avisar-saida-normal"); };
     window.avisarSaidaRei = async function() { registrarSaida("qtd-levar-rei", "btn-avisar-saida-rei"); };
 
@@ -435,7 +435,7 @@
       }
     }
 
-    // --- RESTANTE DAS FUNÇÕES ---
+    // --- 5: PERFIL ---
     window.togglePerfil = function() {
       const box = document.getElementById("perfil-dados");
       box.classList.toggle("escondido");
@@ -487,3 +487,5 @@
   </script>
 </body>
 </html>
+
+
