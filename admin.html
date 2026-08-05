@@ -60,7 +60,7 @@
       </div>
       
       <div style="margin-top: 25px; border-top: 1px solid var(--line); padding-top: 15px;">
-        <div style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: bold;">Registros de Hoje:</div>
+        <div style="font-size: 0.8rem; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; font-weight: bold;">Registros do Expediente Atual:</div>
         <div id="historico-expediente"></div>
       </div>
     </div>
@@ -102,7 +102,18 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    let dataHoje = new Date().toISOString().split('T')[0];
+
+    // --- CORREÇÃO DO FUSO HORÁRIO E DA MADRUGADA ---
+    function obterDataComercial() {
+        const d = new Date();
+        if (d.getHours() < 6) { d.setDate(d.getDate() - 1); }
+        const ano = d.getFullYear();
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const dia = String(d.getDate()).padStart(2, '0');
+        return `${ano}-${mes}-${dia}`;
+    }
+
+    let dataHoje = obterDataComercial();
     let estadoAtualExpediente = "fechado";
 
     const somCampainha = new Audio("https://actions.google.com/sounds/v1/alarms/dinner_bell_triangle.ogg");
@@ -152,14 +163,13 @@
          const div = document.getElementById("historico-expediente");
          div.innerHTML = "";
          if(snapshot.empty) {
-           div.innerHTML = "<span style='opacity: 0.5;'>Nenhum registro hoje.</span>";
+           div.innerHTML = "<span style='opacity: 0.5;'>Nenhum registro no turno atual.</span>";
            return;
          }
 
          let historicoArray = [];
          snapshot.forEach(d => historicoArray.push(d.data()));
          
-         // Organiza a lista localmente para não dar timeout no Firebase
          historicoArray.sort((a, b) => {
             if(!a.timestamp || !b.timestamp) return 0;
             return b.timestamp.seconds - a.timestamp.seconds;
